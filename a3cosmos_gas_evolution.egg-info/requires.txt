@@ -1,0 +1,6 @@
+numpy
+astropy
+matplotlib
+
+[:python_version < "3.0"]
+funcsigs

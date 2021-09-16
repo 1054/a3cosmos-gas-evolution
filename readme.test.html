@@ -1,0 +1,47 @@
+<div id="a-simple-introduction">
+<h2>A simple introduction:</h2>
+<p>This Python package provides functions to calculate a galaxy’s cold molecular gas mass to stellar mass ratio (gas fraction), cold molecular gas depletion time and galaxy main-sequence star formation rate.</p>
+<p>The motivation is that the evolution of star-forming galaxies’ star formation rate (SFR) and cold molecular gas reservoir have now been reasonably well measured out to very high redshift (z~6), from present time up to as early as one giga-year after the Big Bang (Madau &amp; Dickinson 2014; Genzel et al. 2015; Scoville et al. 2016, 2017; Tacconi et al. 2018; Liu et al. 2018, 2019).
+These studies have found that the majority of galaxies have a steady and parametrizable evolution in their stellar mass growth, SFR, and molecular gas mass (or molecular gas to total baryon fraction, i.e., gas fraction).
+These evolution functions have provided crucial constraints to cosmological simulations of dark matter halo evolution and the semi-analytic modeling of the simulated galaxy evolution in the dark matter halo (e.g., Popping et al. 2014ab, 2016, 2017, 2019ab).
+However, currently there are many parametrizations (or we say “equations”) in the literature and each has its own limitation which is not very well aware by the generic users.
+Therefore, we provide this Python package which contains as many galaxy gas, dust, star formation and stellar mass evolution equations as possible for easier comparison and study.</p>
+</div>
+<div id="a-simple-usage">
+<h2>A simple usage:</h2>
+<p>To get cold molecular gas density evolution curve, e.g., Fig. 15 of <a href="https://arxiv.org/abs/1910.12883" rel="nofollow">D. Liu et al. (2019b)</a></p>
+<pre><span class="kn">import</span> <span class="nn">a3cosmos_gas_evolution</span>
+<span class="n">a3cosmos_gas_evolution</span><span class="o">.</span><span class="n">help</span><span class="p">()</span>
+<span class="n">z</span><span class="p">,</span> <span class="n">rho_mol_gas</span> <span class="o">=</span> <span class="n">a3cosmos_gas_evolution</span><span class="o">.</span><span class="n">get_cosmic_mol_gas_density_A3COSMOS</span><span class="p">()</span> <span class="c1"># return rho_mol_gas in solar mass per cubic mega parsec.</span>
+<span class="n">z</span><span class="p">,</span> <span class="n">rho_mol_gas</span> <span class="o">=</span> <span class="n">a3cosmos_gas_evolution</span><span class="o">.</span><span class="n">get_cosmic_mol_gas_density_Tacconi2018</span><span class="p">()</span> <span class="c1"># return rho_mol_gas in solar mass per cubic mega parsec.</span>
+<span class="n">z</span><span class="p">,</span> <span class="n">rho_mol_gas</span> <span class="o">=</span> <span class="n">a3cosmos_gas_evolution</span><span class="o">.</span><span class="n">get_cosmic_mol_gas_density_Scoville2017</span><span class="p">()</span> <span class="c1"># return rho_mol_gas in solar mass per cubic mega parsec.</span>
+<span class="n">a3cosmos_gas_evolution</span><span class="o">.</span><span class="n">plot_cosmic_mol_gas_density</span><span class="p">()</span> <span class="c1"># or plot it with matplotlib</span>
+</pre>
+<p>To compute gas fraction, i.e., <tt>M_molgas / (M_molgas + M_star)</tt></p>
+<pre><span class="kn">import</span> <span class="nn">a3cosmos_gas_evolution</span>
+<span class="n">a3cosmos_gas_evolution</span><span class="o">.</span><span class="n">help</span><span class="p">()</span>
+<span class="n">a3cosmos_gas_evolution</span><span class="o">.</span><span class="n">calc_gas_fraction_A3COSMOS</span><span class="p">(</span><span class="n">z</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">,</span> <span class="n">lgMstar</span> <span class="o">=</span> <span class="mf">10.5</span><span class="p">,</span> <span class="n">DeltaMS</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span> <span class="c1"># or we can input cosmic_age = 2.178 instead of z = 3.0</span>
+<span class="n">a3cosmos_gas_evolution</span><span class="o">.</span><span class="n">calc_gas_fraction_Tacconi2018</span><span class="p">(</span><span class="n">z</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">,</span> <span class="n">lgMstar</span> <span class="o">=</span> <span class="mf">10.5</span><span class="p">,</span> <span class="n">DeltaMS</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span>
+<span class="n">a3cosmos_gas_evolution</span><span class="o">.</span><span class="n">calc_gas_fraction_Scoville2017</span><span class="p">(</span><span class="n">z</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">,</span> <span class="n">lgMstar</span> <span class="o">=</span> <span class="mf">10.5</span><span class="p">,</span> <span class="n">DeltaMS</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span>
+</pre>
+<p>To compute gas depletion time, i.e., <tt>M_molgas / SFR</tt></p>
+<pre><span class="kn">import</span> <span class="nn">a3cosmos_gas_evolution</span>
+<span class="n">a3cosmos_gas_evolution</span><span class="o">.</span><span class="n">help</span><span class="p">()</span>
+<span class="n">a3cosmos_gas_evolution</span><span class="o">.</span><span class="n">calc_gas_depletion_time_A3COSMOS</span><span class="p">(</span><span class="n">z</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">,</span> <span class="n">lgMstar</span> <span class="o">=</span> <span class="mf">10.5</span><span class="p">,</span> <span class="n">DeltaMS</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">)</span>
+<span class="n">a3cosmos_gas_evolution</span><span class="o">.</span><span class="n">calc_gas_depletion_time_Tacconi2018</span><span class="p">(</span><span class="n">z</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">,</span> <span class="n">lgMstar</span> <span class="o">=</span> <span class="mf">10.5</span><span class="p">,</span> <span class="n">DeltaMS</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">)</span>
+<span class="n">a3cosmos_gas_evolution</span><span class="o">.</span><span class="n">calc_gas_depletion_time_Scoville2017</span><span class="p">(</span><span class="n">z</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">,</span> <span class="n">lgMstar</span> <span class="o">=</span> <span class="mf">10.5</span><span class="p">,</span> <span class="n">DeltaMS</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">)</span>
+</pre>
+<p>To compute galaxy main-sequence star formation rate, i.e., <tt>SFR_MS</tt></p>
+<pre><span class="kn">import</span> <span class="nn">a3cosmos_gas_evolution</span>
+<span class="n">a3cosmos_gas_evolution</span><span class="o">.</span><span class="n">help</span><span class="p">()</span>
+<span class="n">a3cosmos_gas_evolution</span><span class="o">.</span><span class="n">calc_SFR_MS_Speagle2014</span><span class="p">(</span><span class="n">z</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">,</span> <span class="n">lgMstar</span> <span class="o">=</span> <span class="mf">10.5</span><span class="p">)</span>
+</pre>
+</div>
+<div id="acknowledgement">
+<h2>Acknowledgement:</h2>
+<p>Please cite <a href="https://arxiv.org/abs/1910.12883" rel="nofollow">Liu et al. (2019b)</a>
+and/or
+<a href="https://ascl.net/1910.003" rel="nofollow">https://ascl.net/1910.003</a>
+if you would like to use this package for your research.</p>
+</div>
+

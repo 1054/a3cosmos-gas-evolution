@@ -1,0 +1,52 @@
+prepare:
+    LICENSE.txt
+    MANIFEST.in
+    README.rst
+    requirements.txt
+    setup.py
+    a3cosmos_gas_evolution/__init__.py
+    a3cosmos_gas_evolution/__main__.py
+
+
+copy:
+    a3cosmos_gas_evolution/Common_Python_Code
+    a3cosmos_gas_evolution/Data_Tables
+
+
+build:
+    python setup.py sdist bdist_wheel
+    
+
+install:
+    python setup.py install --user
+
+
+test (in another Terminal):
+    cd ~
+    python
+    import a3cosmos_gas_evolution
+    z, rho_mol_gas = a3cosmos_gas_evolution.get_cosmic_mol_gas_density_A3COSMOS()
+
+
+prepare to upload (only need once):
+    sudo pip install twine
+
+
+upload:
+    python -m twine upload --skip-existing dist/* # astro.dzliu
+    
+
+check reStructuredText:
+    pip install --user readme_renderer
+    python -m readme_renderer README.rst
+
+
+update (remember to change version number):
+    python -m twine upload --skip-existing dist/*
+
+
+test:
+    python setup.py sdist bdist_wheel
+    python -m twine upload --skip-existing --repository-url https://test.pypi.org/legacy/ dist/*
+    pip install --user --index-url https://test.pypi.org/simple/ a3cosmos-gas-evolution
+

@@ -1,0 +1,8 @@
+include README.rst
+include README.md
+include LICENSE.txt
+include AUTHORS.txt
+
+recursive-include   a3cosmos_gas_evolution/Data_Tables/             *.txt *.fits *.FITS
+recursive-include   a3cosmos_gas_evolution/Common_Python_Code/      *.py
+

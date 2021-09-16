@@ -1,0 +1,3 @@
+20191108 
+    v1.0.0 released
+    TODO: add scipy into readme.test.html
