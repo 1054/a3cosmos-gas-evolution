@@ -338,8 +338,13 @@ def calc_metalZ_from_FMR_following_Genzel2015ab_combined_by_dzliu(M_star, SFR, z
     output_metalZ[~mask] = calc_metalZ_from_FMR_following_Genzel2015a(input_M_star[~mask], input_SFR[~mask], input_z[~mask])
     renorm_metalZ = calc_metalZ_from_FMR_following_Genzel2015b(1e10, input_SFR[~mask]) - \
                     calc_metalZ_from_FMR_following_Genzel2015a(1e10, input_SFR[~mask], input_z[~mask])
-                    
+    # 
     output_metalZ[~mask] = output_metalZ[~mask] + renorm_metalZ
+    # 
+    # 20200524
+    # for lgMstar > 11.9, z < 0.8, always set to 8.75
+    mask = np.logical_and(M_star >= 10**11.9, z < 0.8)
+    output_metalZ[mask] = 8.75
     # 
     return output_metalZ
 
@@ -566,16 +571,16 @@ def calc_metalZ_from_FMR_with_dzliu_selection(M_star, SFR, z):
     #    if metalZ_out[i] < metalZ_out[i-1]:
     #        metalZ_out[i] = metalZ_out[i-1]
     # 
-    # ref Mstar
+    # ref Mstar, above which we do not use G15 but use G15(ref Mstar)
     ref_M_star = 10**(10.4 + 4.46 * np.log10(1+input_z) - 1.78 * (np.log10(1+input_z))**2) # characteristic stellar mass deduced from Genzel2015_Eq12a
     ref_metalZ_G15a = calc_metalZ_from_FMR_following_Genzel2015_Eq12a(ref_M_star, input_z)
     #ref_metalZ_G15b = calc_metalZ_from_FMR_following_Genzel2015_Eq12b(ref_M_star, input_SFR) # equals convert_metalZ_M08_to_metalZ_PP04_N2_linear(calc_metalZ_from_FMR_following_Mannucci2010_Eq4(ref_M_star, input_SFR))
-    ref_metalZ_M10Eq4 = convert_metalZ_M08_to_metalZ_PP04_N2_polynomial(calc_metalZ_from_FMR_following_Mannucci2010_Eq4(ref_M_star, input_SFR)) # apply convert_metalZ_M08_to_metalZ_PP04_N2_polynomial() conversion is better because it will turn down a little bit the metalZ at the low mass end!
+    #ref_metalZ_M10Eq4 = convert_metalZ_M08_to_metalZ_PP04_N2_polynomial(calc_metalZ_from_FMR_following_Mannucci2010_Eq4(ref_M_star, input_SFR)) # apply convert_metalZ_M08_to_metalZ_PP04_N2_polynomial() conversion is better because it will turn down a little bit the metalZ at the low mass end!
     # 
     # choose min of (metalZ_G15a, metalZ_M10Eq4) when (M_star < ref_M_star)
-    mask1 = np.logical_and(metalZ_G15a < metalZ_M10Eq4, input_M_star < ref_M_star)
-    metalZ_out = metalZ_M10Eq4
-    metalZ_out[mask1] = metalZ_G15a[mask1]
+    #metalZ_out = metalZ_M10Eq4
+    #mask1 = np.logical_and(metalZ_G15a < metalZ_M10Eq4, input_M_star < ref_M_star)
+    #metalZ_out[mask1] = metalZ_G15a[mask1]
     # 
     # keeps constant at massive end
     #mask2 = (ref_metalZ_G15a < ref_metalZ_M10Eq4)

@@ -132,6 +132,73 @@ def calc_SMF_Davidzon2017(z, lgMstar=None, galaxy_type = 'SFG'):
 
 
 
+def calc_SMF_Moutard2016(z, lgMstar=None, galaxy_type = 'SFG'):
+    # 
+    # Moutard 2016 - SMF - https://ui.adsabs.harvard.edu/abs/2016A%26A...590A.103M/abstract
+    # IMF: Chabrier 2003
+    # Outputs: lgMstar_grid, lgPhiMstar_grid
+    # 
+    # check z
+    if not np.isscalar(z):
+        raise ValueError('Please input a float number as the redshift!')
+    # 
+    # check galaxy_type
+    if not (type(galaxy_type) is str):
+        raise ValueError('Please input either "ALL", "SFG" or "QG" as the galaxy_type!')
+    else:
+        if not (galaxy_type in ['ALL', 'SFG', 'QG']):
+            raise ValueError('Please input either "ALL", "SFG" or "QG" as the galaxy_type!')
+    # 
+    # make lgMstar
+    if lgMstar is None:
+        lgMstar_grid = np.linspace(6.0, 13.0, num=1000, endpoint=True)
+    else:
+        lgMstar_grid = lgMstar
+    # 
+    # read SMF
+    tb_SMF = Table.read(os.path.dirname(os.path.dirname(__file__))+os.sep+'Data_Tables/datatables_SMF/datatable_Moutard2016_SMF_'+galaxy_type+'.txt', format='ascii') # zLo zHi lgMchar  Phi_1   alpha_1  Phi_2  alpha_2
+    SMF_zmin = np.min(tb_SMF['zLo'])
+    SMF_zmax = np.max(tb_SMF['zHi'])
+    # 
+    # check z
+    if z < SMF_zmin or z > SMF_zmax:
+        raise ValueError('calc_SMF_Moutard2016: The input redshift is out of the allowed range of %s -- %s!'%(SMF_zmin, SMF_zmax))
+    # 
+    # spline SMF
+    lgPhiMstar_matrix = []
+    for k in range(len(tb_SMF)):
+        SMF_z = (tb_SMF['zLo'][k] + tb_SMF['zHi'][k]) / 2.0
+        SMF_phi_1 = tb_SMF['Phi_1'][k]
+        SMF_phi_2 = tb_SMF['Phi_2'][k]
+        SMF_alpha_1 = tb_SMF['alpha_1'][k]
+        SMF_alpha_2 = tb_SMF['alpha_2'][k]
+        SMF_lgMchar = tb_SMF['lgMchar'][k]
+        #print('calc_SMF_Moutard2016: z %r, lgMchar %r, alpha_1 %r, phi_1 %r, alpha_2 %r, phi_2 %r'%(z, SMF_lgMchar, SMF_alpha_1, SMF_phi_1, SMF_alpha_2, SMF_phi_2))
+        SMF_PhiMstar = Schechter_Function(lgMstar_grid, SMF_phi_1, SMF_lgMchar, SMF_alpha_1) + \
+                       Schechter_Function(lgMstar_grid, SMF_phi_2, SMF_lgMchar, SMF_alpha_2) # two component
+        lgPhiMstar_grid = np.log10(SMF_PhiMstar)
+        lgPhiMstar_matrix.append(copy(lgPhiMstar_grid))
+    # 
+    SMF_z = (tb_SMF['zLo'].data + tb_SMF['zHi'].data) / 2.0
+    lgPhiMstar_matrix = np.array(lgPhiMstar_matrix) # shape == (N_SMF_z, N_SMF_lgMstar, )
+    if z <= np.min(SMF_z):
+        lgPhiMstar_grid = lgPhiMstar_matrix[0]
+    elif z >= np.max(SMF_z):
+        lgPhiMstar_grid = lgPhiMstar_matrix[-1]
+    else:
+        lgPhiMstar_grid = interp1d(SMF_z, lgPhiMstar_matrix, axis=0, kind='linear')(z)
+    #print(lgPhiMstar_matrix.shape, SMF_z.shape, lgPhiMstar_grid.shape)
+    # fix nan
+    lgPhiMstar_grid[np.isnan(lgPhiMstar_grid)] = -100
+    lgPhiMstar_grid[(lgPhiMstar_grid<-100)] = -100
+    # 
+    if lgMstar is None:
+        return lgMstar_grid, lgPhiMstar_grid
+    else:
+        return lgPhiMstar_grid
+
+
+
 def calc_SMF_Ilbert2013(z, lgMstar=None, galaxy_type = 'SFG'):
     # 
     # Ilbert 2013
@@ -222,36 +289,107 @@ def calc_SMF_Peng2010(z, lgMstar=None, galaxy_type='SFG'):
     else:
         lgMstar_grid = lgMstar
     # 
-    # read SMF
-    tb_SMF = Table.read(os.path.dirname(os.path.dirname(__file__))+os.sep+'Data_Tables/datatables_SMF/datatable_PengYingjie2010_SMF_'+galaxy_type+'.txt', format='ascii') # zLo zHi lgMchar  Phi_1   alpha_1  Phi_2  alpha_2
-    SMF_zmin = np.min(tb_SMF['zLo'])
-    SMF_zmax = np.max(tb_SMF['zHi'])
-    # 
-    # there is only one redshift bin, but we still check the input z range
-    if z < SMF_zmin or z > SMF_zmax:
-        raise ValueError('calc_SMF_Peng2010: The input redshift is out of the allowed range of %s -- %s!'%(SMF_zmin, SMF_zmax))
-    # 
-    # just calculate SMF without interpolation
-    SMF_z = (tb_SMF['zLo'].data + tb_SMF['zHi'].data) / 2.0
-    SMF_phi_1 = tb_SMF['Phi_1'].data
-    SMF_alpha_1 = tb_SMF['alpha_1'].data
-    SMF_lgMchar = tb_SMF['lgMchar'].data
-    SMF_PhiMstar = Schechter_Function(lgMstar_grid, SMF_phi_1, SMF_lgMchar, SMF_alpha_1) # one component
-    if galaxy_type == 'SFG':
-        SMF_PhiMstar_SFG = copy(SMF_PhiMstar)
+    # galaxy_type
+    if galaxy_type == 'ALL':
+        galaxy_types = ['SFG', 'QG']
     else:
-        SMF_phi_2 = tb_SMF['Phi_2'].data
-        SMF_alpha_2 = tb_SMF['alpha_2'].data
-        SMF_PhiMstar_SFG = copy(SMF_PhiMstar)
-        SMF_PhiMstar_QG = SMF_PhiMstar_SFG + Schechter_Function(lgMstar_grid, SMF_phi_2, SMF_lgMchar, SMF_alpha_2) # two component QG SMF
-        SMF_PhiMstar_ALL = SMF_PhiMstar_QG + SMF_PhiMstar_SFG
+        galaxy_types = [galaxy_type]
+    # 
+    # read SMF
+    for t_galaxy_type in galaxy_types:
+        tb_SMF = Table.read(os.path.dirname(os.path.dirname(__file__))+os.sep+'Data_Tables/datatables_SMF/datatable_PengYingjie2010_SMF_'+galaxy_type+'.txt', format='ascii') # zLo zHi lgMchar  Phi_1   alpha_1  Phi_2  alpha_2
+        SMF_zmin = np.min(tb_SMF['zLo'])
+        SMF_zmax = np.max(tb_SMF['zHi'])
+        # 
+        # there is only one redshift bin, but we still check the input z range
+        if z < SMF_zmin or z > SMF_zmax:
+            raise ValueError('calc_SMF_Peng2010: The input redshift is out of the allowed range of %s -- %s!'%(SMF_zmin, SMF_zmax))
+        # 
+        # just calculate SMF without interpolation
+        SMF_z = (tb_SMF['zLo'].data + tb_SMF['zHi'].data) / 2.0
+        SMF_phi_1 = tb_SMF['Phi_1'].data
+        SMF_alpha_1 = tb_SMF['alpha_1'].data
+        SMF_lgMchar = tb_SMF['lgMchar'].data
+        SMF_PhiMstar = Schechter_Function(lgMstar_grid, SMF_phi_1, SMF_lgMchar, SMF_alpha_1) # one component
+        if t_galaxy_type == 'SFG':
+            SMF_PhiMstar_SFG = copy(SMF_PhiMstar)
+        elif t_galaxy_type == 'QG':
+            SMF_phi_2 = tb_SMF['Phi_2'].data
+            SMF_alpha_2 = tb_SMF['alpha_2'].data
+            SMF_PhiMstar_QG = SMF_PhiMstar + Schechter_Function(lgMstar_grid, SMF_phi_2, SMF_lgMchar, SMF_alpha_2) # two component QG SMF
     # 
     if galaxy_type == 'SFG':
         lgPhiMstar_grid = np.log10(SMF_PhiMstar_SFG)
     elif galaxy_type == 'QG':
         lgPhiMstar_grid = np.log10(SMF_PhiMstar_QG)
     elif galaxy_type == 'ALL':
-        lgPhiMstar_grid = np.log10(SMF_PhiMstar_ALL)
+        lgPhiMstar_grid = np.log10(SMF_PhiMstar_SFG+SMF_PhiMstar_QG)
+    # 
+    if lgMstar is None:
+        return lgMstar_grid, lgPhiMstar_grid
+    else:
+        return lgPhiMstar_grid
+
+
+
+def calc_SMF_Kelvin2014(z, lgMstar=None, galaxy_type='SFG'):
+    # 
+    # Kelvin 2014 (2014MNRAS.444.1647K)
+    # GAMA survey
+    # IMF: Chabrier 2003
+    # Table 3, Spheroid dominated, and Disc dominated
+    # Outputs: lgMstar_grid, lgPhiMstar_grid
+    # 
+    # check z
+    if not np.isscalar(z):
+        raise ValueError('Please input a float number as the redshift!')
+    # 
+    # check galaxy_type
+    if not (type(galaxy_type) is str):
+        raise ValueError('Please input either "ALL", "SFG" or "QG" as the galaxy_type!')
+    else:
+        if not (galaxy_type in ['SFG', 'QG']):
+            raise ValueError('Please input either "ALL", "SFG" or "QG" as the galaxy_type!')
+    # 
+    # make lgMstar
+    if lgMstar is None:
+        lgMstar_grid = np.linspace(6.0, 13.0, num=1000, endpoint=True)
+    else:
+        lgMstar_grid = lgMstar
+    # 
+    # galaxy_type
+    if galaxy_type == 'ALL':
+        galaxy_types = ['SFG', 'QG']
+    else:
+        galaxy_types = [galaxy_type]
+    # 
+    # read SMF
+    for t_galaxy_type in galaxy_types:
+        tb_SMF = Table.read(os.path.dirname(os.path.dirname(__file__))+os.sep+'Data_Tables/datatables_SMF/datatable_Kelvin2014_SMF_'+galaxy_type+'.txt', format='ascii') # zLo zHi lgMchar Phi_1 alpha_1
+        SMF_zmin = np.min(tb_SMF['zLo'])
+        SMF_zmax = np.max(tb_SMF['zHi'])
+        # 
+        # there is only one redshift bin, but we still check the input z range
+        if z < SMF_zmin or z > SMF_zmax:
+            raise ValueError('calc_SMF_Kelvin2014: The input redshift is out of the allowed range of %s -- %s!'%(SMF_zmin, SMF_zmax))
+        # 
+        # just calculate SMF without interpolation
+        SMF_z = (tb_SMF['zLo'].data + tb_SMF['zHi'].data) / 2.0
+        SMF_phi_1 = tb_SMF['Phi_1'].data
+        SMF_alpha_1 = tb_SMF['alpha_1'].data
+        SMF_lgMchar = tb_SMF['lgMchar'].data
+        SMF_PhiMstar = Schechter_Function(lgMstar_grid, SMF_phi_1, SMF_lgMchar, SMF_alpha_1) # one component
+        if t_galaxy_type == 'SFG':
+            SMF_PhiMstar_SFG = copy(SMF_PhiMstar)
+        elif t_galaxy_type == 'QG':
+            SMF_PhiMstar_QG = copy(SMF_PhiMstar)
+    # 
+    if galaxy_type == 'SFG':
+        lgPhiMstar_grid = np.log10(SMF_PhiMstar_SFG)
+    elif galaxy_type == 'QG':
+        lgPhiMstar_grid = np.log10(SMF_PhiMstar_QG)
+    elif galaxy_type == 'ALL':
+        lgPhiMstar_grid = np.log10(SMF_PhiMstar_SFG+SMF_PhiMstar_QG)
     # 
     if lgMstar is None:
         return lgMstar_grid, lgPhiMstar_grid
@@ -322,6 +460,7 @@ def calc_SMF_Wright2018_double_component(z, lgMstar=None):
         return lgMstar_grid, lgPhiMstar_grid
     else:
         return lgPhiMstar_grid
+
 
 
 
@@ -425,10 +564,22 @@ def calc_SMF_dzliu2018(z=None, lgMstar=None, galaxy_type='SFG', z_list=None, tun
     # code from '/Volumes/GoogleDrive/Team Drives/DeepFields/Simulations/Cosmological_Galaxy_Modelling/a_dzliu_code_Plot_SMF_dzliu_model.sm'
     # make z_list
     if z_list is None:
-        #z_list = np.arange(10.75, 0.75, -0.5).tolist()
-        #z_list.extend([0.75, 0.50, 0.25, 0.125, 0.0625, 0.03125, 0.015625, 0.00000])
-        z_list = np.arange(10.75, 1.00, -0.5).tolist()
-        z_list.extend([1.00, 0.75, 0.50, 0.25, 0.125, 0.0625, 0.03125, 0.015625, 0.00000])
+        ##z_list = np.arange(10.75, 0.75, -0.5).tolist()
+        ##z_list.extend([0.75, 0.50, 0.25, 0.125, 0.0625, 0.03125, 0.015625, 0.00000])
+        #z_list = np.arange(10.75, 1.00, -0.5).tolist()
+        #z_list.extend([1.00, 0.75, 0.50, 0.25, 0.125, 0.0625, 0.03125, 0.015625, 0.00000])
+        #print('z_list', z_list, '(len=%d)'%(len(z_list)))
+        # 
+        # <20200105> precision issue
+        # <20200105> now we increase the sampling of z_list from 29 to 40, so that the SMF are better interpolated.
+        z_list = [] 
+        z_list.extend(np.arange(10.75, 5.00, -0.5).tolist())
+        z_list.extend(np.arange(5.00, 1.00, -0.25).tolist())
+        z_list.extend(np.arange(1.00, 0.125, -0.125).tolist())
+        z_list.extend([0.125, 0.0625, 0.03125, 0.015625, 0.00000])
+        #print('z_list', z_list, '(len=%d)'%(len(z_list)))
+        # <20200105> precision issue (end)
+        # 
         #z_list = []
         #z_list.extend(np.arange(9.75, 4.00, -0.5).tolist())
         #z_list.extend(np.arange(4.00, 3.00, -0.25).tolist())
@@ -542,6 +693,179 @@ def calc_SMF_dzliu2018(z=None, lgMstar=None, galaxy_type='SFG', z_list=None, tun
 
 
 
+
+
+
+def calc_SMF_dzliu2020(z=None, lgMstar=None, galaxy_type='SFG', z_list=None, tuning_params='', verbose=True):
+    # 
+    # dzliu 2020 - optimized choice
+    # IMF: Chabrier 2003
+    # Outputs: lgMstar_grid, lgPhiMstar_grid
+    # 
+    # tuning_params: for example, 'D17-no-renorm;'
+    # 
+    # 
+    # check z
+    if z is not None:
+        if not np.isscalar(z):
+            #raise ValueError('Please input a float number as the redshift!')
+            if type(z) is list:
+                z = np.array(z)
+            z_is_vector = True
+        else:
+            z_is_vector = False
+    # 
+    # check galaxy_type
+    if not (type(galaxy_type) is str):
+        raise ValueError('Please input either "ALL", "SFG" or "QG" as the galaxy_type!')
+    else:
+        if not (galaxy_type in ['SFG', 'QG', 'ALL']):
+            raise ValueError('Please input either "ALL", "SFG" or "QG" as the galaxy_type!')
+    # 
+    # make lgMstar
+    if lgMstar is None:
+        lgMstar_grid = np.linspace(6.0, 13.0, num=1000, endpoint=True)
+    else:
+        lgMstar_grid = lgMstar
+    # 
+    # code from '/Volumes/GoogleDrive/Team Drives/DeepFields/Simulations/Cosmological_Galaxy_Modelling/a_dzliu_code_Plot_SMF_dzliu_model.sm'
+    # make z_list
+    if z_list is None:
+        ##z_list = np.arange(10.75, 0.75, -0.5).tolist()
+        ##z_list.extend([0.75, 0.50, 0.25, 0.125, 0.0625, 0.03125, 0.015625, 0.00000])
+        #z_list = np.arange(10.75, 1.00, -0.5).tolist()
+        #z_list.extend([1.00, 0.75, 0.50, 0.25, 0.125, 0.0625, 0.03125, 0.015625, 0.00000])
+        #print('z_list', z_list, '(len=%d)'%(len(z_list)))
+        # 
+        # <20200105> precision issue
+        # <20200105> now we increase the sampling of z_list from 29 to 40, so that the SMF are better interpolated.
+        z_list = [] 
+        z_list.extend(np.arange(10.75, 5.00, -0.5).tolist())
+        z_list.extend(np.arange(5.00, 1.00, -0.25).tolist())
+        z_list.extend(np.arange(1.00, 0.125, -0.125).tolist())
+        z_list.extend([0.125, 0.0625, 0.03125, 0.015625, 0.00000])
+        #print('z_list', z_list, '(len=%d)'%(len(z_list)))
+        # <20200105> precision issue (end)
+        # 
+        #z_list = []
+        #z_list.extend(np.arange(9.75, 4.00, -0.5).tolist())
+        #z_list.extend(np.arange(4.00, 3.00, -0.25).tolist())
+        #z_list.extend(np.arange(3.00, 2.00, -0.125).tolist())
+        #z_list.extend(np.arange(2.00, 1.00, -0.0625).tolist())
+        #z_list.extend(np.arange(1.00, 0.00, -0.03125).tolist())
+        #z_list.extend([0.00])
+    SMF_z_list = []
+    SMF_Phi_list = []
+    Mstar_cumulated_list = calc_Mstar_integrating_CSFRD_dzliu2018(z_list)
+    for i in range(len(z_list)-1):
+        z_bin = (z_list[i] + z_list[i+1]) / 2.0
+        t_bin = cosmo.age(z_bin).value # Gyr since the Big Bang
+        Schechter_M = 10**lgMstar_grid
+        Schechter_Mstep = lgMstar_grid[1] - lgMstar_grid[0]
+        do_renorm_by_CSFRD_cumulated_Mstar = True
+        # 
+        # first construct SMF at each redshift bin
+        #if False:
+        #    EEE_Mchar_MQG = lg((10**10.68)*(t_bin/cosmo.age(0).value)**(0.50)) # Quiescent galaxies' SMF's first component
+        #    EEE_Mchar_NQG = lg((10**10.68)*(t_bin/cosmo.age(0).value)**(0.50)) # Quiescent galaxies' SMF's second component
+        #    EEE_Mchar_SFG = lg((10**10.72)*(t_bin/cosmo.age(0).value)**(-0.50)) # Star-forming galaxies' SMF
+        #    EEE_Phi_MQG = (3.400e-3)*(t_bin/cosmo.age(0).value)**(4.00)
+        #    EEE_Phi_NQG = (0.126e-3)*(t_bin/cosmo.age(0).value)**(4.00) # decrease much faster with increasing z
+        #    EEE_Phi_SFG = (0.900e-3)*(t_bin/cosmo.age(0).value)**(0.20)
+        #    EEE_alpha_MQG = -0.39 + (z_bin)*(1.00)
+        #    EEE_alpha_NQG = -1.56 + (z_bin)*(1.00)
+        #    EEE_alpha_SFG = -1.40 + (z_bin)*(-0.06) # slope -- this makes too many low mass galaxiest at z>4 -- faint-end of the 24um number counts -- no, this is because stellar SED has too old age, f24um is underestimated!
+        #    #EEE_alpha_SFG = -1.40 + (z)*(-0.03) # slope
+        #    Schechter_P_MQG = Schechter_Function(lgMstar_grid, EEE_Phi_MQG, EEE_Mchar_MQG, EEE_alpha_MQG)
+        #    Schechter_P_NQG = Schechter_Function(lgMstar_grid, EEE_Phi_NQG, EEE_Mchar_NQG, EEE_alpha_NQG)
+        #    Schechter_P_SFG = Schechter_Function(lgMstar_grid, EEE_Phi_SFG, EEE_Mchar_SFG, EEE_alpha_SFG)
+        #    Schechter_P_QG = Schechter_P_MQG + Schechter_P_NQG
+        #    #print('z = %.04f, lgSchechter_P_SFG = %s, lgSchechter_P_QG = %s'%(z_bin, np.log10(Schechter_P_SFG), np.log10(Schechter_P_QG)))
+        # 
+        if z_bin < 0.025:
+            Schechter_P_QG = 10**(calc_SMF_Kelvin2014(0.025, lgMstar=lgMstar_grid, galaxy_type='QG'))
+            Schechter_P_SFG = 10**(calc_SMF_Kelvin2014(0.025, lgMstar=lgMstar_grid, galaxy_type='SFG'))
+        elif z_bin < 0.06:
+            Schechter_P_QG = 10**(calc_SMF_Kelvin2014(z_bin, lgMstar=lgMstar_grid, galaxy_type='QG'))
+            Schechter_P_SFG = 10**(calc_SMF_Kelvin2014(z_bin, lgMstar=lgMstar_grid, galaxy_type='SFG'))
+        elif z_bin < 0.2:
+            # interpolate Kelvin2014 local SMF and Moutard2016 SMF
+            t_lower_opz = np.log10(1.0+0.06)
+            t_upper_opz = np.log10(1.0+0.2)
+            t_opz = np.log10(1.0+z_bin)
+            t_lower_factor = (t_upper_opz-t_opz)/(t_upper_opz-t_lower_opz)
+            t_upper_factor = 1.0-t_lower_factor
+            Schechter_P_QG = 10**(calc_SMF_Kelvin2014(0.06, lgMstar=lgMstar_grid, galaxy_type='QG')) * t_lower_factor + 10**(calc_SMF_Moutard2016(0.2, lgMstar=lgMstar_grid, galaxy_type='QG')) * t_upper_factor
+            Schechter_P_SFG = 10**(calc_SMF_Kelvin2014(0.06, lgMstar=lgMstar_grid, galaxy_type='SFG')) * t_lower_factor + 10**(calc_SMF_Moutard2016(0.2, lgMstar=lgMstar_grid, galaxy_type='SFG')) * t_upper_factor
+        elif z_bin < 1.5:
+            Schechter_P_QG = 10**(calc_SMF_Moutard2016(z_bin, lgMstar=lgMstar_grid, galaxy_type='QG'))
+            Schechter_P_SFG = 10**(calc_SMF_Moutard2016(z_bin, lgMstar=lgMstar_grid, galaxy_type='SFG'))
+        elif z_bin < 4.0:
+            Schechter_P_QG = 10**(calc_SMF_Davidzon2017(z_bin, lgMstar=lgMstar_grid, galaxy_type='QG'))
+            Schechter_P_SFG = 10**(calc_SMF_Davidzon2017(z_bin, lgMstar=lgMstar_grid, galaxy_type='SFG'))
+            #<TODO># QG/SFG fraction seems lower at z~1-3?
+            #if z_bin > 1.0 and z_bin < 3.0:
+            #    Schechter_P_QG = Schechter_P_QG * np.interp(z_bin, [1.0, 1.5, 2.0, 2.5, 3.0], [1.0, 1.2, 1.2, 1.2, 1.0])
+            if tuning_params is not None:
+                if tuning_params.find('D17-no-renorm')>=0:
+                    do_renorm_by_CSFRD_cumulated_Mstar = False
+        else:
+            Schechter_P_QG = 10**(calc_SMF_Davidzon2017(4.0, lgMstar=lgMstar_grid, galaxy_type='QG'))
+            Schechter_P_SFG = 10**(calc_SMF_Davidzon2017(4.0, lgMstar=lgMstar_grid, galaxy_type='SFG'))
+            # 
+            # Note that my Schechter_Function already contains * ln(10), i.e., it is per dex!
+            # 
+        # 
+        # 
+        # then re-normalize SMF to total stellar mass integrated from CSFRD (assumed some mass loss, see the called function)
+        #Mstar_cumulated = calc_Mstar_integrating_CSFRD_dzliu2018(z_bin)
+        #Mstar_cumulated = calc_Mstar_integrating_CSFRD_dzliu2018(z_list[i+1]) #<20190915># BUGGY, should be z bin edge, and z_list is in descending order 
+        Mstar_cumulated = Mstar_cumulated_list[i+1]
+        #CSFRD_at_z_bin = calc_MadauDickinson2014_CSFRD(z_bin)
+        #<TODO><20191001># mask = (Schechter_M>=1e9) #<20191001># to match the Madau & Dickinson (2014) integration limit of '0.03 * L_characteristic', i.e., 0.03 * M_characteristic = 0.03 * 10**10.5 = 
+        #<TODO><20191001># Schechter_M_total = sum((Schechter_P_QG[mask]+Schechter_P_SFG[mask])*Schechter_M[mask]*Schechter_Mstep) # P is per dex, but our Schechter_Function already contains ln(10), hence we do not need to multiply ln(10) here. \int P(M) dM = \int P(M) M dln(M) = \int P(M)*ln(10) M dlg(M)
+        
+        if do_renorm_by_CSFRD_cumulated_Mstar:
+            Schechter_M_total = sum((Schechter_P_QG+Schechter_P_SFG)*Schechter_M*Schechter_Mstep) # P is per dex, but our Schechter_Function already contains ln(10), hence we do not need to multiply ln(10) here. \int P(M) dM = \int P(M) M dln(M) = \int P(M)*ln(10) M dlg(M)
+            renorm_factor = Mstar_cumulated / Schechter_M_total
+            Schechter_P_SFG = Schechter_P_SFG * renorm_factor # per dex but already contains ln(10)
+            Schechter_P_QG = Schechter_P_QG * renorm_factor # per dex but already contains ln(10)
+        Schechter_P_ALL = Schechter_P_SFG + Schechter_P_QG
+        if verbose:
+            print('z = %.04f, lgMstar_CSFRD = %0.2f, lgMstar_SMF = %0.2f, renorm = %s'%(z_bin, np.log10(Mstar_cumulated), np.log10(Schechter_M_total), renorm_factor))
+        #print('z = %.04f, lgCSFRD = %0.2f, lgMstar_CSFRD = %0.2f, lgMstar_SMF = %0.2f'%(z_bin, np.log10(CSFRD_at_z_bin), np.log10(Mstar_cumulated), np.log10(Schechter_M_total)))
+        # 
+        # --> checked OK
+        # z = 0.0156, lgCSFRD = -2.04, lgMstar_CSFRD = 8.40, lgMstar_SMF = 8.35
+        # 
+        # 
+        SMF_z_list.append(z_list[i+1]) # append the lower redshift end point of each bin
+        if galaxy_type == 'SFG':
+            SMF_Phi_list.append(Schechter_P_SFG)
+        elif galaxy_type == 'QG':
+            SMF_Phi_list.append(Schechter_P_QG)
+        elif galaxy_type == 'ALL':
+            SMF_Phi_list.append(Schechter_P_ALL)
+        # 
+    # spline at z for the output
+    SMF_z_list = np.array(SMF_z_list)[::-1] # make z increasing order
+    SMF_Phi_list = np.array(SMF_Phi_list)[::-1].T # make z increasing order
+    #print(SMF_z_list.shape, SMF_Phi_list.shape)
+    # 
+    if z is None:
+        lgPhiMstar_matrix = np.log10(SMF_Phi_list.T)
+        return SMF_z_list, lgMstar_grid, lgPhiMstar_matrix
+    elif z_is_vector:
+        #print('calc_SMF_dzliu2018: np.min(SMF_z_list), np.max(SMF_z_list), z:', np.min(SMF_z_list), np.max(SMF_z_list), z)
+        lgPhiMstar_grid = interp1d(SMF_z_list, np.log10(SMF_Phi_list), kind='cubic')(z) # kind='nearest' 'linear' 'quadratic' 'cubic'
+    else:
+        #print('calc_SMF_dzliu2018: np.min(SMF_z_list), np.max(SMF_z_list), z:', np.min(SMF_z_list), np.max(SMF_z_list), z)
+        lgPhiMstar_grid = interp1d(SMF_z_list, np.log10(SMF_Phi_list), kind='cubic')(z) # kind='nearest' 'linear' 'quadratic' 'cubic'
+    # 
+    if lgMstar is None:
+        return lgMstar_grid, lgPhiMstar_grid
+    else:
+        return lgPhiMstar_grid
 
 
 

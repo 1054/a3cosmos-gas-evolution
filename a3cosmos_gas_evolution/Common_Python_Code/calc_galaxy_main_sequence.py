@@ -211,8 +211,9 @@ def calc_SFR_MS_Genzel2015(z, lgMstar=10.5):
     # assumed Chabrier2003 IMF
     # 
     # -- taken from Whitaker+2012
-    sSFR_MS = 10**(-1.12 + 1.14 * z - 0.19 * z**2 - (0.3 + 0.13 * z) * (lgMstar - 10.5))
-    SFR_MS = sSFR_MS * np.power(10.0, lgMstar)
+    sSFR_MS = 10**(-1.12 + 1.14 * z - 0.19 * z**2 - (0.3 + 0.13 * z) * (lgMstar - 10.5)) # Gyr-1
+    #SFR_MS = sSFR_MS * np.power(10.0, lgMstar) <BUG><20210916> Thanks to William at ASU for catching this bug!
+    SFR_MS = sSFR_MS * np.power(10.0, lgMstar) / 1e9
     return SFR_MS
 
 
@@ -345,7 +346,30 @@ def calc_SFR_MS_Leslie20190710(z, lgMstar, params = (0.38,9.28,4.48,3.69,7.70) )
     SFR_MS = np.power(10.0, log_SFR)
     return SFR_MS
 
+def calc_SFR_MS_Leslie20191212(z, lgMstar, params = (2.93, 11.0, 0.208, 0.105) ):
+    # priv. comm.
+    # using a Chabrier IMF and a flat lambda CDM cosmology with H0=70,Om0=0.3.
+    t = cosmo.age(z).value
+    s0, m0, a1, a2 = params
+    S0 = s0 - a1*t
+    M0 = m0 - a2*t #-a3**2
+    gamma = 1
+    lgSFR_MS = S0 - np.log10(1 + 10**(-gamma * (lgMstar - M0) ) )
+    SFR_MS = 10**lgSFR_MS
+    return SFR_MS
 
+def calc_SFR_MS_Leslie20200306(z, lgMstar, params = (2.965, 11.06, 0.215, 0.119) ):
+    # priv. comm.
+    # VLA_COSMOS_SSFR_r1.pdf -- Table 1
+    # using a Chabrier IMF and a flat lambda CDM cosmology with H0=70,Om0=0.3.
+    t = cosmo.age(z).value
+    s0, m0, a1, a2 = params
+    S0 = s0 - a1*t
+    M0 = m0 - a2*t #-a3**2
+    gamma = 1
+    lgSFR_MS = S0 - np.log10(1 + 10**(-gamma * (lgMstar - M0) ) )
+    SFR_MS = 10**lgSFR_MS
+    return SFR_MS
 
 
 

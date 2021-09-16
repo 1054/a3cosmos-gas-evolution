@@ -2,4 +2,5 @@
 __pycache__
 a3cosmos_gas_evolution/__pycache__
 a3cosmos_gas_evolution/Common_Python_Code/__pycache__
+*.pyc
 

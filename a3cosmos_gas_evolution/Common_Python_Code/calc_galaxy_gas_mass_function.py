@@ -117,6 +117,38 @@ def calc_CO10_LF_Saintonge2017_updated(lgMgas=None, input_type=1):
     else:
         return lgPhiMgas_grid
 
+def calc_CO10_LF_Keres2003(lgMgas=None, input_type=1):
+    # 
+    # Keres 2003 CO LF
+    # IMF: 
+    # Outputs: lgMgas_grid, lgPhiMgas_grid
+    # 
+    # 
+    # make lgMgas
+    if lgMgas is None:
+        lgMgas_grid = np.linspace(6.0, 13.0, num=1000, endpoint=True)
+    else:
+        lgMgas_grid = lgMgas
+    # 
+    # read GMF
+    tb = Table.read(os.path.dirname(os.path.dirname(__file__))+os.sep+'Data_Tables/datatables_GMF/datatable_Keres2003_CO10_LF.txt', format='ascii')
+    GMF_zmin = np.min(tb['zLo'])
+    GMF_zmax = np.max(tb['zHi'])
+    GMF_lgMchar = tb['lgLchar'][0]
+    GMF_phi_1 = tb['Phi_1'][0]
+    GMF_alpha_1 = tb['alpha_1'][0]
+    # 
+    GMF_Phi_L_Prime_CO10 = Schechter_Function(lgMgas_grid, GMF_phi_1, GMF_lgMchar, GMF_alpha_1) # single component
+    lgPhiMgas_grid = np.log10(GMF_Phi_L_Prime_CO10)
+    # 
+    # fix nan
+    lgPhiMgas_grid[np.isnan(lgPhiMgas_grid)] = -100
+    lgPhiMgas_grid[(lgPhiMgas_grid<-100)] = -100
+    # 
+    if lgMgas is None:
+        return lgMgas_grid, lgPhiMgas_grid
+    else:
+        return lgPhiMgas_grid
 
 
 
