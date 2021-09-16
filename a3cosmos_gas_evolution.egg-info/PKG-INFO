@@ -1,14 +1,15 @@
 Metadata-Version: 1.2
 Name: a3cosmos-gas-evolution
-Version: 1.0.0
+Version: 1.1.0
 Summary: A Python Package for Galaxy Cold Molecular Gas and Star Formation Evolution Equations.
 Home-page: https://sites.google.com/view/a3cosmos
 Author: A3COSMOS Team
-Author-email: dzliu@mpia.de
+Author-email: dzliu@mpe.mpg.de
 Maintainer: A3COSMOS Team
-Maintainer-email: dzliu@mpia.de
+Maintainer-email: dzliu@mpe.mpg.de
 License: BSD License
 Project-URL: Documentation, https://sites.google.com/view/a3cosmos/code/code-a3cosmos-gas-evolution
+Project-URL: Source Code, https://github.com/1054/a3cosmos-gas-evolution
 Description: ######################
         a3cosmos-gas-evolution
         ######################
@@ -101,6 +102,7 @@ Description: ######################
 Keywords: a3cosmos galaxy molecular gas dust star formation SFR evolution equation parametrization
 Platform: all
 Classifier: Development Status :: 4 - Beta
+Classifier: Development Status :: 5 - Production/Stable
 Classifier: Operating System :: OS Independent
 Classifier: Intended Audience :: Developers
 Classifier: License :: OSI Approved :: ISC License (ISCL)

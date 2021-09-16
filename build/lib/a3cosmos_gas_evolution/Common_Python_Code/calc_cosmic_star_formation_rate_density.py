@@ -47,17 +47,41 @@ def calc_CSFRD_Madau2014(z):
     return calc_cosmic_star_formation_rate_density_MadauDickinson2014(z)
 
 
+# CSFRD Gladders et al. 2013, Abramson et al. 2016
+def calc_cosmic_star_formation_rate_density_Abramson2016(z):
+    # Gladders et al. 2013, Abramson et al. 2016
+    A0 = 0.96 # see Abramson et al. 2016 Fig. 1 caption
+    T0 = 1.64 # see Abramson et al. 2016 Fig. 1 caption
+    tau = 0.66 # see Abramson et al. 2016 Fig. 1 caption
+    t = cosmo.age(z).value
+    rho_SFR = A0 / (t * np.sqrt(2.0*np.pi*(tau**2))) * np.exp((-(np.log(t)-T0)**2) / (2.0*(tau**2)))
+    #rho_SFR = 0.96 * rho_SFR # http://arxiv.org/pdf/1604.00016.pdf Fig.1 Caption AUni=0.96
+    rho_SFR = rho_SFR / 1.64 # Abramson et al. 2016 used Salpeter IMF while we convert to Chabrier IMF
+    return rho_SFR
+
+def calc_cosmic_star_formation_rate_density_Gladders2013(z):
+    return calc_cosmic_star_formation_rate_density_Abramson2016(z)
+    
+def calc_CSFRD_Gladders2013(z):
+    return calc_cosmic_star_formation_rate_density_Abramson2016(z)
+
+def calc_CSFRD_Abramson2016(z):
+    return calc_cosmic_star_formation_rate_density_Abramson2016(z)
+
+
 # CSFRD Liudz 2018
 def calc_cosmic_star_formation_rate_density_Liu2018(z, shape = 'double-powerlaw'):
     # D. Liu et al. 2018 (bibcode:2018ApJ...853..172L)
     # Chabrier IMF
     # shape can be 'double-powerlaw' or 'log-normal'
     if shape.startswith('double'):
-        rho_SFR = 0.00587 * (1+z)**3.0 / (1.0 + ((1+z)/2.9)**5.6)
+        #rho_SFR = 0.00587 * (1+z)**3.0 / (1.0 + ((1+z)/2.9)**5.6)
+        rho_SFR = 0.00962 * (1+z)**3.0 / (1.0 + ((1+z)/2.9)**5.6) # errtam: 0.015*10**(-0.1927) = 0.00962
+        # Note that Madau & Dickinson parameters are: 0.015/1.64 * (1+z)**2.7 / (1.0 + ((1+z)/2.9)**5.6)
     elif shape.startswith('log'):
         A0 = 0.575
-        tau = 0.66
         T0 = 1.50
+        tau = 0.66
         t = cosmo.age(z).value
         rho_SFR = A0 / (t * np.sqrt(2.0*np.pi*(tau**2))) * np.exp((-(np.log(t)-T0)**2) / (2.0*(tau**2)))
     else:

@@ -75,7 +75,7 @@ def calc_deltaGD_from_metalZ_following_RemyRuyer2014a(metalZ):
         GDR_ISM[maskZ] = 10**(a + aH*(metaZsolar-metaZ[maskZ]))
         GDR_ISM[~maskZ] = 10**(b + aL*(metaZsolar-metaZ[~maskZ]))
     else:
-        GDR_ISM = 10**(a + aH*(metaZsolar-metaZ)) if metaZ>7.96 else 10**(b + aL*(metaZsolar-metaZ))
+        GDR_ISM = 10**(a + aH*(metaZsolar-metaZ)) if metaZ>metaZknee else 10**(b + aL*(metaZsolar-metaZ))
     #GDR_mol = GDR_ISM/1.38 # considering only molecular gas (without HI, but still with Helium). See Remy-Ruyer et al. 2014 Eq.(3)
     return GDR_ISM
 
@@ -101,7 +101,7 @@ def calc_deltaGD_from_metalZ_following_RemyRuyer2014b(metalZ):
         GDR_ISM[maskZ] = 10**(a + aH*(metaZsolar-metaZ[maskZ]))
         GDR_ISM[~maskZ] = 10**(b + aL*(metaZsolar-metaZ[~maskZ]))
     else:
-        GDR_ISM = 10**(a + aH*(metaZsolar-metaZ)) if metaZ>7.96 else 10**(b + aL*(metaZsolar-metaZ))
+        GDR_ISM = 10**(a + aH*(metaZsolar-metaZ)) if metaZ>metaZknee else 10**(b + aL*(metaZsolar-metaZ))
     #GDR_mol = GDR_ISM/1.38 # considering only molecular gas (without HI, but still with Helium). See Remy-Ruyer et al. 2014 Eq.(3)
     return GDR_ISM
 

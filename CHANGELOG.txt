@@ -1,3 +1,5 @@
 20191108 
     v1.0.0 released
 
+20210916
+    v1.1.0 released. Fixed a coding bug in `calc_SFR_MS_Genzel2015`.
