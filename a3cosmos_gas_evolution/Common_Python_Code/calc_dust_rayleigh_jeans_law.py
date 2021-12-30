@@ -11,7 +11,7 @@ import numpy as np
 
 from astropy import units as u
 from astropy import constants as const
-from astropy.modeling.blackbody import blackbody_lambda, blackbody_nu
+#from astropy.modeling.blackbody import blackbody_lambda, blackbody_nu
 
 if sys.version_info.major >= 3:
     long = int

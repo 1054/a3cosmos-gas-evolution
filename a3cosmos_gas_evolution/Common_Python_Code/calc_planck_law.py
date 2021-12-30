@@ -9,9 +9,17 @@ import numpy as np
 #from copy import copy
 #from numpy import log10, power as pow
 
+import astropy
 from astropy import units as u
 from astropy import constants as const
-from astropy.modeling.blackbody import blackbody_lambda, blackbody_nu
+from packaging import version
+if version.parse(astropy.__version__) < version.parse('4.0.0'):
+    from astropy.modeling.blackbody import blackbody_lambda, blackbody_nu
+    # funtions deprecated since v4.0.0, see -- https://astropy-astrofrog.readthedocs.io/en/latest/modeling/blackbody_deprecated.html
+else:
+    from astropy.modeling.models import BlackBody
+    blackbody_lambda = lambda w, t: BlackBody(t, scale=1.0 * u.erg / (u.cm ** 2 * u.AA * u.s * u.sr))(w)
+    blackbody_nu = lambda w, t: BlackBody(t)(w)
 
 if sys.version_info.major >= 3:
     long = int
@@ -41,6 +49,7 @@ if __name__ == '__main__':
     
     print('T_dust = %s [K]'%(T_dust))
     
+    # calc Planck law
     cal_Lv_obs_erg_s_Hz = blackbody_nu(lambda_um * u.um, T_dust * u.K) # * np.power(2.99792458e5/lambda_um, beta)
     print(cal_Lv_obs_erg_s_Hz)
     #print('%0.6e'%(cal_Lv_obs_erg_s_Hz))

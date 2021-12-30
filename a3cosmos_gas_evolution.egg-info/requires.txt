@@ -1,5 +1,6 @@
 numpy
 astropy
+scipy
 matplotlib
 
 [:python_version < "3.0"]

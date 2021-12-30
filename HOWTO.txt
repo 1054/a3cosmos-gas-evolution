@@ -13,12 +13,16 @@ copy:
     a3cosmos_gas_evolution/Data_Tables
 
 
+version:
+    vi setup.py
+
+
 build:
     python setup.py sdist bdist_wheel
     
 
 install:
-    python setup.py install --user
+    pip install dist/a3cosmos_gas_evolution-1.1.1.tar.gz --user
 
 
 test (in another Terminal):

@@ -63,6 +63,8 @@ dist/a3cosmos_gas_evolution-0.9.9.tar.gz
 dist/a3cosmos_gas_evolution-1.0.0-py3-none-any.whl
 dist/a3cosmos_gas_evolution-1.0.0-py3.7.egg
 dist/a3cosmos_gas_evolution-1.0.0.tar.gz
+dist/a3cosmos_gas_evolution-1.1.0-py3-none-any.whl
+dist/a3cosmos_gas_evolution-1.1.0.tar.gz
 figures/Plot_SF_MS_bin_by_lgMstar_horizontal.png
 figures/Plot_SMF_ALL.png
 figures/Plot_SMF_QG.png

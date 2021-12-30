@@ -11,11 +11,19 @@ from __future__ import print_function
 
 import os, sys, re, json, time, astropy
 import numpy as np
+import astropy
 from astropy.table import Table, Column, hstack
 from astropy import units as u
 from astropy import constants as const
-from astropy.modeling.blackbody import blackbody_lambda, blackbody_nu
 from copy import copy
+from packaging import version
+if version.parse(astropy.__version__) < version.parse('4.0.0'):
+    from astropy.modeling.blackbody import blackbody_lambda, blackbody_nu
+    # funtions deprecated since v4.0.0, see -- https://astropy-astrofrog.readthedocs.io/en/latest/modeling/blackbody_deprecated.html
+else:
+    from astropy.modeling.models import BlackBody
+    blackbody_lambda = lambda w, t: BlackBody(t, scale=1.0 * u.erg / (u.cm ** 2 * u.AA * u.s * u.sr))(w)
+    blackbody_nu = lambda w, t: BlackBody(t)(w)
 
 from astropy.cosmology import FlatLambdaCDM
 cosmo = FlatLambdaCDM(H0=70, Om0=0.27, Tcmb0=2.725)
