@@ -1,7 +1,7 @@
-numpy
 astropy
-matplotlib
-packaging
-scipy
-pytest
 looseversion
+matplotlib
+numpy
+packaging
+pytest
+scipy
