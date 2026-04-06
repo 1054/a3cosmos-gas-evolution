@@ -402,7 +402,7 @@ def calc_gas_mass_from_dust_mass(M_dust, M_star = None, SFR = None, metallicity 
                 if not ('calc_metalZ_from_FMR_following_Genzel2015ab_combined_by_dzliu' in dir()):
                     from calc_metal_Z import calc_metalZ_from_FMR_following_Genzel2015ab_combined_by_dzliu
                 metallicity = calc_metalZ_from_FMR_following_Genzel2015ab_combined_by_dzliu(M_star, SFR, z)
-                method += ', lgMstar=%.2f, SFR=%g, [Genzel2015abcomb] metallicity=%.2f'%(np.log10(M_star), SFR, metallicity)
+                method += ', lgMstar=%.2f, SFR=%g, [Genzel2015abcomb] metallicity=%.2f'%(np.log10(M_star), SFR, float(metallicity))
         else:
             method += ', metallicity=%.2f'%(metallicity)
         # 
@@ -410,7 +410,7 @@ def calc_gas_mass_from_dust_mass(M_dust, M_star = None, SFR = None, metallicity 
             if not ('calc_deltaGD_from_metalZ_following_RemyRuyer2014b' in dir()):
                 from calc_delta_GD import calc_deltaGD_from_metalZ_following_RemyRuyer2014b
             GDR = calc_deltaGD_from_metalZ_following_RemyRuyer2014b(metallicity)
-            method += ', [RemyRuyer2014b] GDR=%.2f'%(GDR)
+            method += ', [RemyRuyer2014b] GDR=%.2f'%(float(GDR))
         else:
             # 
             method += ', GDR=%.2f'%(GDR)

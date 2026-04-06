@@ -8,10 +8,10 @@ import sys
 sys.path.insert(0, os.path.abspath('../..'))
 
 project = 'a3cosmos-gas-evolution'
-copyright = '2024, A3COSMOS Team'
+copyright = '2017-2026, A3COSMOS Team'
 author = 'A3COSMOS Team'
-release = '2.0.0'
-version = '2.0.0'
+release = '2.0.2'
+version = '2.0.2'
 
 extensions = [
     'sphinx.ext.autodoc',

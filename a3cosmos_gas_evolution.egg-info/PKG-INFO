@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: a3cosmos_gas_evolution
-Version: 2.0.0
+Version: 2.0.1
 Summary: A Python Package for Galaxy Cold Molecular Gas and Star Formation Evolution Equations.
 Home-page: https://sites.google.com/view/a3cosmos
 Author: A3COSMOS Team
@@ -40,6 +40,9 @@ Requires-Dist: numpy
 Requires-Dist: astropy
 Requires-Dist: scipy
 Requires-Dist: matplotlib
+Requires-Dist: packaging
+Requires-Dist: pytest
+Requires-Dist: looseversion; python_version > "3.10"
 Requires-Dist: funcsigs; python_version < "3.0"
 Dynamic: author
 Dynamic: author-email

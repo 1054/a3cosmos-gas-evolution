@@ -345,7 +345,9 @@ def calc_metalZ_from_FMR_following_Genzel2015ab_combined_by_dzliu(M_star, SFR, z
     # for lgMstar > 11.9, z < 0.8, always set to 8.75
     mask = np.logical_and(M_star >= 10**11.9, z < 0.8)
     output_metalZ[mask] = 8.75
-    # 
+    #
+    if np.isscalar(M_star) and np.isscalar(SFR) and np.isscalar(z):
+        return float(output_metalZ[0])
     return output_metalZ
 
 

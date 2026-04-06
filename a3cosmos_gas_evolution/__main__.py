@@ -53,7 +53,7 @@ def load_all_modules():
     load_all_functions_in_one_module(calc_metal_Z,                      r'^(calc_metalZ_from_FMR_following_|convert_metalZ_).*',  print_to_screen = False)
     load_all_functions_in_one_module(calc_fmol,                         r'^calc_fmol_from_metalZ_following_.*',                   print_to_screen = False)
     load_all_functions_in_one_module(calc_gas_mass_from_dust,           r'^calc_gas_mass_from_dust_.*',                           print_to_screen = False)
-    load_all_functions_in_one_module(calc_gas_mass_from_line,           r'^calc_gas_mass_from_line',                              print_to_screen = False)
+    load_all_functions_in_one_module(calc_gas_mass_from_line,           r'^calc_gas_mass_from_line_.*',                           print_to_screen = False)
 
 
 
@@ -167,7 +167,7 @@ def help():
     load_all_functions_in_one_module(calc_gas_mass_from_dust, r'^calc_gas_mass_from_dust_.*', print_to_screen = True) # print all function within this module
     print('')
     print('    # To calculate gas mass from CO or [CII] line fluxes: ')
-    load_all_functions_in_one_module(calc_gas_mass_from_line, r'^calc_gas_mass_from_line_flux', print_to_screen = True) # print all function within this module
+    load_all_functions_in_one_module(calc_gas_mass_from_line, r'^calc_gas_mass_from_line_.*', print_to_screen = True) # print all function within this module
     print('')
     
     print('Examples:')

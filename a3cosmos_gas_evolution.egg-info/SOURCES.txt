@@ -85,13 +85,10 @@ dist/a3cosmos_gas_evolution-0.9.6.tar.gz
 dist/a3cosmos_gas_evolution-0.9.7-py3-none-any.whl
 dist/a3cosmos_gas_evolution-0.9.7.tar.gz
 dist/a3cosmos_gas_evolution-0.9.8-py3-none-any.whl
-dist/a3cosmos_gas_evolution-0.9.8-py3.7.egg
 dist/a3cosmos_gas_evolution-0.9.8.tar.gz
 dist/a3cosmos_gas_evolution-0.9.9-py3-none-any.whl
-dist/a3cosmos_gas_evolution-0.9.9-py3.7.egg
 dist/a3cosmos_gas_evolution-0.9.9.tar.gz
 dist/a3cosmos_gas_evolution-1.0.0-py3-none-any.whl
-dist/a3cosmos_gas_evolution-1.0.0-py3.7.egg
 dist/a3cosmos_gas_evolution-1.0.0.tar.gz
 dist/a3cosmos_gas_evolution-1.1.0-py3-none-any.whl
 dist/a3cosmos_gas_evolution-1.1.0.tar.gz
@@ -110,6 +107,8 @@ tests/test_calc_fmol.py
 tests/test_calc_galaxy_main_sequence.py
 tests/test_calc_gas_depletion_time.py
 tests/test_calc_gas_fraction.py
+tests/test_calc_gas_mass_from_dust.py
+tests/test_calc_gas_mass_from_line.py
 tests/test_calc_metal_Z.py
 tests/test_calc_planck_law.py
 tests/test_calc_star_formation_law.py
