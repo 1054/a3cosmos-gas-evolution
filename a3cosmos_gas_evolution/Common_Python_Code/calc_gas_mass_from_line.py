@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 # 
 # Usage:
-#    from calc_fmol import ( calc_fmol_from_metalZ_following_Krumholz2009, 
-#                            calc_fmol_from_metalZ_following_Dave2016, 
-#                            calc_fmol_from_metalZ_following_Popping2014 )
+#    from calc_gas_mass_from_line import calc_gas_mass_from_line
 # 
 # 
 
@@ -11,6 +9,7 @@ from __future__ import print_function
 
 import os, sys, re, json, time, astropy
 import numpy as np
+from astropy import units as u
 from astropy.table import Table, Column, hstack
 from copy import copy
 
@@ -22,105 +21,46 @@ if sys.version_info.major >= 3:
 else:
     pass
 
+from calc_metal_Z import calc_metalZ_from_FMR_following_Genzel2015a
+from calc_alpha_CO import calc_alphaCO_from_metalZ_following_Genzel2015a
 
 
 # ============================================================================
 # MOLECULAR GAS MASS CALCULATIONS
 # ============================================================================
 
-def solar_mass():
-    """Solar mass in kg."""
-    return 1.98847e30  # kg
-
-def alpha_CO_zmass(z, M_star_log, metallicity=None):
-    """
-    Calculate α_CO from mass-metallicity relation.
-    
-    Based on:
-    - Mass-metallicity relation: 12 + log(O/H) = f(M_*)
-    - α_CO scaling with metallicity
-    
-    Args:
-        z: Redshift
-        M_star_log: Log stellar mass (log10(M_*/M_sun))
-        metallicity: Optional explicit metallicity
-    
-    Returns:
-        alpha_CO in M_sun/(K km/s pc^2)
-    """
-    # Mass-metallicity relation (Tremonti et al. 2004, modified)
-    # 12 + log(O/H) = 9.0 - 0.35 * log(M_*/M_sun) + 0.10 * log^2(M_*/M_sun)
-    # At high-z, metallicity may be lower
-    
-    # At z ~ 4, metallicity ~ 0.2-0.5 solar
-    # α_CO ∝ Z^-1 (lower metallicity → higher α_CO)
-    
-    # Simplified: α_CO increases at high-z due to lower metallicity
-    # α_CO(z=0) ~ 4.36 (Milky Way)
-    # α_CO(z~4) ~ 3-5 (depends on galaxy type)
-    
-    if metallicity is None:
-        # Estimate metallicity from mass (scaled by redshift)
-        log_Z_solar = 0.3 - 0.3 * (1 - 1/(1+z))  # ~0.3 at z=4
-    else:
-        log_Z_solar = metallicity
-    
-    # α_CO scaling with metallicity
-    Z_solar = 10**log_Z_solar
-    alpha_mw = 4.36  # Milky Way value
-    alpha_CO_val = alpha_mw / max(Z_solar, 0.1)  # Don't go too low
-    
-    # Cap at reasonable values
-    alpha_CO_val = np.clip(alpha_CO_val, 0.8, 10.0)
-    
-    return alpha_CO_val
-
-def calc_molecular_gas_mass(CO_luminosity, alpha_CO):
-    """
-    Calculate molecular gas mass from CO luminosity.
-    
-    M_H2 = α_CO * L'_CO
-    
-    Args:
-        CO_luminosity: L'_CO in K km/s pc^2
-        alpha_CO: α_CO in M_sun/(K km/s pc^2)
-    
-    Returns:
-        M_H2 in solar masses
-    """
-    return alpha_CO * CO_luminosity
-
-
 # 转换因子
 ALPHA_CII = 30.0  # L_sun/M_sun ([CII] 光度 - 气体质量转换因子，文献范围 30-100)
 ALPHA_CO_MW = 4.3  # M_sun/(K km/s pc²) (银河系)
 ALPHA_CO_SB = 0.8  # M_sun/(K km/s pc²) (星暴/高红移)
 
-def calculate_gas_mass_from_line(
+def calc_gas_mass_from_line_flux(
         z, 
-        logMstar, 
+        lgMstar, 
         freq, 
         flux, 
         line_name, 
         cosmo = cosmo,
         alpha_CO = None,
         alpha_CII = None, 
+        line_excitation_ratio = None,
+        verbose = False,
     ):
     """Calculate (molecular) gas mass
 
-    Return: (M_gas, L_line, line_unit, line_name)
-      - M_gas: (molecular) gas mass (M_sun)
-      - L_line: line luminosity ('L_sun' or 'K km s-1 pc2')
+    Return: (log_M_gas, log_L_line, line_unit, line_name)
+      - log_M_gas: (molecular) gas mass (M_sun)
+      - log_L_line: line luminosity ('L_sun' or 'K km s-1 pc2')
       - line_unit: line luminosity unit ('L_sun' or 'K km s-1 pc2')
       - line_type: line type ('CII' or 'CO')
     """
-    logMgas = np.nan
-    logLline = np.nan
+    lgMgas = float(np.nan)
+    lgLline = float(np.nan)
     line_unit = 'unknown'
     line_type = 'unknown'
     
-    if z is None or str(z) == '' or np.isnan(float(z)) or float(z) <= 0:
-        return logMgas, logLline, line_unit, line_type
+    if z is None or str(z) == '' or np.isnan(float(z)) or float(z) <= 0 or np.isnan(float(flux)) or float(flux) <= 0:
+        return lgMgas, lgLline, line_unit, line_type
     
     # 光度距离
     D_L = cosmo.luminosity_distance(z).to(u.Mpc).value  # Mpc
@@ -141,8 +81,8 @@ def calculate_gas_mass_from_line(
             alpha_CII = ALPHA_CII
         M_gas = L_CII_Lsun / alpha_CII  # M_sun
         
-        logMgas = np.log10(M_gas)
-        logLline = np.log10(L_CII_Lsun)
+        lgMgas = np.log10(M_gas)
+        lgLline = np.log10(L_CII_Lsun)
         line_unit = 'L_sun'
         line_type = 'CII'
     
@@ -152,25 +92,45 @@ def calculate_gas_mass_from_line(
         # S_CO in Jy km/s, ν_obs in GHz, D_L in Mpc
         
         L_prime_CO = 3.25e7 * flux * (freq)**(-2) * (D_L)**2 * (1+z)**(-3)  # K km/s pc²
+
+        # 激发改正
+        r_J1_map = {
+            'CO(1-0)': 1.0,
+            'CO(2-1)': 0.8,
+            'CO(3-2)': 0.5,
+            'CO(4-3)': 0.4,
+            'CO(5-4)': 0.3,
+            'CO(6-5)': 0.25,
+            'CO(7-6)': 0.2,
+            'CO(8-7)': 0.15,
+        }
+        if line_excitation_ratio is None:
+            r_J1 = r_J1_map.get(line_name, 0.5)
+        else:
+            if line_excitation_ratio > 1.0:
+                raise ValueError(f'line_excitation_ratio ({line_excitation_ratio}) must be <= 1.0')
+            r_J1 = line_excitation_ratio
+        L_prime_CO10 = L_prime_CO / r_J1
         
         # 气体质量 (使用高红移质量依赖的 α_CO)
         if alpha_CO is None: 
-            if logMstar is None:
+            if lgMstar is None:
                 alpha_CO = ALPHA_CO_SB
             else:
-                alpha_CO = alpha_CO_zmass(z, logMstar)
-        M_gas = alpha_CO * L_prime_CO  # M_sun
+                SFR = None # not needed
+                metalZ = calc_metalZ_from_FMR_following_Genzel2015a(10**lgMstar, SFR, z)
+                alpha_CO = calc_alphaCO_from_metalZ_following_Genzel2015a(metalZ)
+                if verbose:
+                    print(f'metalZ: {metalZ:.2f}, Z/Zsun: {10**(metalZ-8.69):.2f}, alpha_CO: {alpha_CO:.2f}')
+        M_gas = alpha_CO * L_prime_CO10  # M_sun
+        if verbose:
+            print(f'alpha_CO: {alpha_CO:.2f}, L_prime_CO: {L_prime_CO:.3e}, L_prime_CO10: {L_prime_CO10:.3e}, M_gas: {M_gas:.3e}')
         
-        logMgas = np.log10(M_gas)
-        logLline = np.log10(L_prime_CO)
+        lgMgas = float(np.log10(M_gas))
+        lgLline = float(np.log10(L_prime_CO)) # noting that the return is L_prime_CO not L_prime_CO10
         line_unit = 'K km s-1 pc2'
         line_type = 'CO'
     
-    return logMgas, logLline, line_unit, line_type
-
-
-
-
-
+    return lgMgas, lgLline, line_unit, line_type
 
 

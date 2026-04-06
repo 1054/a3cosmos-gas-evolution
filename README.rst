@@ -39,15 +39,27 @@ To get cold molecular gas density evolution curve, e.g., Fig. 15 of `D. Liu et a
 
 
 
-To compute gas fraction, i.e., ``M_molgas / (M_molgas + M_star)``
+To compute gas fraction, i.e., ``f_gas = M_molgas / (M_molgas + M_star)``
 
 .. code-block:: python
 
     import a3cosmos_gas_evolution
     a3cosmos_gas_evolution.help()
-    a3cosmos_gas_evolution.calc_gas_fraction_A3COSMOS(z = 3.0, lgMstar = 10.5, DeltaMS = 0.5) # or we can input cosmic_age = 2.178 instead of z = 3.0
-    a3cosmos_gas_evolution.calc_gas_fraction_Tacconi2018(z = 3.0, lgMstar = 10.5, DeltaMS = 0.5)
-    a3cosmos_gas_evolution.calc_gas_fraction_Scoville2017(z = 3.0, lgMstar = 10.5, DeltaMS = 0.5)
+    a3cosmos_gas_evolution.calc_gas_fraction_A3COSMOS(z = 3.0, lgMstar = 10.5, DeltaMS = 0.5, return_fgas=True) # or we can input cosmic_age = 2.178 instead of z = 3.0
+    a3cosmos_gas_evolution.calc_gas_fraction_Tacconi2018(z = 3.0, lgMstar = 10.5, DeltaMS = 0.5, return_fgas=True)
+    a3cosmos_gas_evolution.calc_gas_fraction_Scoville2017(z = 3.0, lgMstar = 10.5, DeltaMS = 0.5, return_fgas=True)
+
+
+
+To compute gas-to-stellar mass ratio, i.e., ``mu_gas = M_molgas / M_star``
+
+.. code-block:: python
+
+    import a3cosmos_gas_evolution
+    a3cosmos_gas_evolution.help()
+    a3cosmos_gas_evolution.calc_gas_fraction_A3COSMOS(z = 3.0, lgMstar = 10.5, DeltaMS = 0.5, return_fgas=False) # or we can input cosmic_age = 2.178 instead of z = 3.0
+    a3cosmos_gas_evolution.calc_gas_fraction_Tacconi2018(z = 3.0, lgMstar = 10.5, DeltaMS = 0.5, return_fgas=False)
+    a3cosmos_gas_evolution.calc_gas_fraction_Scoville2017(z = 3.0, lgMstar = 10.5, DeltaMS = 0.5, return_fgas=False)
 
 
 

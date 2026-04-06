@@ -4,3 +4,4 @@ matplotlib
 packaging
 scipy
 pytest
+looseversion

@@ -8,7 +8,7 @@ For example, there are a number of studies on the galaxy main sequence correlati
 There are also increasing number of works studying the cold molecular gas to baryon mass fraction or to stellar mass ratio as a function of a galaxy's stellar mass, star formation rate and redshfit. 
 A compilation of these functions will facilitate many of our scientific works. 
 
-The current `a3cosmos-gas-evolution` package (`v1.0.0`) includes:
+The current `a3cosmos-gas-evolution` package (`v2.0.0`) includes:
 
 - a number of galaxy stellar mass functions
 - a number of galaxy main sequence functions
@@ -33,9 +33,10 @@ We hope this can be a nice public effort for helping people understanding the ga
 
 #### Known issue
 
-##### v1.0.0
-
-- Due to a coding bug, the output of `calc_SFR_MS_Genzel2015` should be multiplied by 1E-9. This will be fixed in v1.1.0. 
+- v1.2.0 (fixed)
+  - In this and previous version, the `calc_gas_fraction_*` functions returns `mu_gas` (`M_gas/M_star`) instead of `f_gas` (`M_gas/(M_gas+M_star)`). Although it is noted, the function name can still be confusing. So from v2.0.0, we add an option `return_fgas` to return `f_gas` by default. To return `mu_gas`, set `return_fgas=False`.
+- v1.0.0 (fixed)
+  - Due to a coding bug, the output of `calc_SFR_MS_Genzel2015` should be multiplied by 1E-9. This will be fixed in v1.1.0. 
 
 
 
@@ -58,6 +59,7 @@ We hope this can be a nice public effort for helping people understanding the ga
 
 #### Last update
 
+- 2026-04-07: v2.0.0 released.
 - 2021-09-16: Moving things to this git repo. Preparing this ReadMe. 
 
 

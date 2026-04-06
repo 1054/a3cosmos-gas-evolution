@@ -21,12 +21,14 @@ else:
 from .Common_Python_Code import get_cosmic_mol_gas_density
 from .Common_Python_Code import calc_gas_fraction
 from .Common_Python_Code import calc_galaxy_main_sequence
+from .Common_Python_Code import calc_galaxy_stellar_mass_function
 from .Common_Python_Code import calc_gas_depletion_time
 from .Common_Python_Code import calc_alpha_CO
 from .Common_Python_Code import calc_delta_GD
 from .Common_Python_Code import calc_metal_Z
 from .Common_Python_Code import calc_fmol
 from .Common_Python_Code import calc_gas_mass_from_dust
+from .Common_Python_Code import calc_gas_mass_from_line
 from .Common_Python_Code import apply_cosmology
 cosmo = apply_cosmology.cosmo
 
@@ -37,16 +39,18 @@ cosmo = apply_cosmology.cosmo
 # load all modules
 # 
 def load_all_modules():
-    load_all_functions_in_one_module(get_cosmic_mol_gas_density,  r'^get_cosmic_mol_gas_density_.*',                        print_to_screen = False)
-    load_all_functions_in_one_module(get_cosmic_mol_gas_density,  r'^plot_cosmic_mol_gas_density.*',                        print_to_screen = False)
-    load_all_functions_in_one_module(calc_gas_fraction,           r'^calc_gas_fraction_.*',                                 print_to_screen = False)
-    load_all_functions_in_one_module(calc_galaxy_main_sequence,   r'^calc_SFR_MS_.*',                                       print_to_screen = False)
-    load_all_functions_in_one_module(calc_gas_depletion_time,     r'^calc_gas_depletion_time_.*',                           print_to_screen = False)
-    load_all_functions_in_one_module(calc_alpha_CO,               r'^calc_alphaCO_from_metalZ_following_.*',                print_to_screen = False)
-    load_all_functions_in_one_module(calc_delta_GD,               r'^calc_deltaGD_from_metalZ_following_.*',                print_to_screen = False)
-    load_all_functions_in_one_module(calc_metal_Z,                r'^(calc_metalZ_from_FMR_following_|convert_metalZ_).*',  print_to_screen = False)
-    load_all_functions_in_one_module(calc_fmol,                   r'^(calc_fmol_from_metalZ_following_).*',                 print_to_screen = False)
-    load_all_functions_in_one_module(calc_gas_mass_from_dust,     r'^(calc_gas_mass_from_dust_).*',                         print_to_screen = False)
+    load_all_functions_in_one_module(get_cosmic_mol_gas_density,        r'^get_cosmic_mol_gas_density_.*',                        print_to_screen = False)
+    load_all_functions_in_one_module(get_cosmic_mol_gas_density,        r'^plot_cosmic_mol_gas_density.*',                        print_to_screen = False)
+    load_all_functions_in_one_module(calc_gas_fraction,                 r'^calc_gas_fraction_.*',                                 print_to_screen = False)
+    load_all_functions_in_one_module(calc_galaxy_main_sequence,         r'^calc_SFR_MS_.*',                                       print_to_screen = False)
+    load_all_functions_in_one_module(calc_galaxy_stellar_mass_function, r'^calc_SMF_.*',                                          print_to_screen = False)
+    load_all_functions_in_one_module(calc_gas_depletion_time,           r'^calc_gas_depletion_time_.*',                           print_to_screen = False)
+    load_all_functions_in_one_module(calc_alpha_CO,                     r'^calc_alphaCO_from_metalZ_following_.*',                print_to_screen = False)
+    load_all_functions_in_one_module(calc_delta_GD,                     r'^calc_deltaGD_from_metalZ_following_.*',                print_to_screen = False)
+    load_all_functions_in_one_module(calc_metal_Z,                      r'^(calc_metalZ_from_FMR_following_|convert_metalZ_).*',  print_to_screen = False)
+    load_all_functions_in_one_module(calc_fmol,                         r'^(calc_fmol_from_metalZ_following_).*',                 print_to_screen = False)
+    load_all_functions_in_one_module(calc_gas_mass_from_dust,           r'^(calc_gas_mass_from_dust_).*',                         print_to_screen = False)
+    load_all_functions_in_one_module(calc_gas_mass_from_line,           r'^(calc_gas_mass_from_line).*',                          print_to_screen = False)
 
 
 
@@ -159,8 +163,8 @@ def help():
     
     print('Examples:')
     print('    import a3cosmos_gas_evolution as a3g')
-    print('    a3g.calc_gas_fraction_A3COSMOS(z=3.0, lgMstar=10.5, DeltaMS=0.5)')
-    print('    = %s'%(calc_gas_fraction_A3COSMOS(z=3.0, lgMstar=10.5, DeltaMS=0.5)))
+    print('    a3g.calc_gas_fraction_A3COSMOS(z=3.0, lgMstar=10.5, DeltaMS=0.5, return_fgas=True)')
+    print('    = %s'%(calc_gas_fraction_A3COSMOS(z=3.0, lgMstar=10.5, DeltaMS=0.5, return_fgas=True)))
     print('    a3g.calc_gas_depletion_time_A3COSMOS(z=3.0, lgMstar=10.5, DeltaMS=0.5)')
     print('    = %s'%(calc_gas_depletion_time_A3COSMOS(z=3.0, lgMstar=10.5, DeltaMS=0.5)))
     print('    # which means that a galaxy at redshift 3.0 with stellar mass 10^{10.5} solMass and 0.5 dex above the main sequence')

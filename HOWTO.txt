@@ -33,7 +33,7 @@ test (in another Terminal):
 
 
 prepare to upload (only need once):
-    sudo pip install twine
+    pip install twine
 
 
 upload:

@@ -4,9 +4,12 @@ from __future__ import print_function # for Python<=2.X
 #from __future__ import with_statement # for Python<=2.5
 #from __future__ import nested_scopes # for Python<=2.1
 #from pkg_resources import parse_version
-from distutils.version import LooseVersion, StrictVersion
 import os, sys, re
-if sys.version_info.major>=3:
+if sys.version_info <= (3, 10):
+    from distutils.version import LooseVersion, StrictVersion # for Python<=3.10
+else:
+    from looseversion import LooseVersion
+if sys.version_info.major >= 3:
     import inspect
     inspect_func_signature = inspect.signature
 else:
@@ -48,9 +51,9 @@ def load_all_modules():
     load_all_functions_in_one_module(calc_alpha_CO,                     r'^calc_alphaCO_from_metalZ_following_.*',                print_to_screen = False)
     load_all_functions_in_one_module(calc_delta_GD,                     r'^calc_deltaGD_from_metalZ_following_.*',                print_to_screen = False)
     load_all_functions_in_one_module(calc_metal_Z,                      r'^(calc_metalZ_from_FMR_following_|convert_metalZ_).*',  print_to_screen = False)
-    load_all_functions_in_one_module(calc_fmol,                         r'^(calc_fmol_from_metalZ_following_).*',                 print_to_screen = False)
-    load_all_functions_in_one_module(calc_gas_mass_from_dust,           r'^(calc_gas_mass_from_dust_).*',                         print_to_screen = False)
-    load_all_functions_in_one_module(calc_gas_mass_from_line,           r'^(calc_gas_mass_from_line).*',                          print_to_screen = False)
+    load_all_functions_in_one_module(calc_fmol,                         r'^calc_fmol_from_metalZ_following_.*',                   print_to_screen = False)
+    load_all_functions_in_one_module(calc_gas_mass_from_dust,           r'^calc_gas_mass_from_dust_.*',                           print_to_screen = False)
+    load_all_functions_in_one_module(calc_gas_mass_from_line,           r'^calc_gas_mass_from_line',                              print_to_screen = False)
 
 
 
@@ -159,6 +162,12 @@ def help():
     print('')
     print('    # To calculate gas depletion time (tauDepl or tauGas) with z, Mstar and SFR using gas scaling relations: ')
     load_all_functions_in_one_module(calc_gas_depletion_time, r'^calc_gas_depletion_time_.*', print_to_screen = True) # print all function within this module
+    print('')
+    print('    # To calculate gas mass from dust conitnuum: ')
+    load_all_functions_in_one_module(calc_gas_mass_from_dust, r'^calc_gas_mass_from_dust_.*', print_to_screen = True) # print all function within this module
+    print('')
+    print('    # To calculate gas mass from CO or [CII] line fluxes: ')
+    load_all_functions_in_one_module(calc_gas_mass_from_line, r'^calc_gas_mass_from_line_flux', print_to_screen = True) # print all function within this module
     print('')
     
     print('Examples:')

@@ -25,13 +25,15 @@ else:
 # 
 # def 
 # 
-def calc_gas_fraction_Scoville2017(z, lgMstar=10.5, DeltaMS=0.0):
+def calc_gas_fraction_Scoville2017(z, lgMstar=10.5, DeltaMS=0.0, return_fgas=True):
     # Scoville et al. 2017 (The Astrophysical Journal, 837:150 (20pp), 2017 March 10)
     # Table 2
     Ratio_M_molgas_M_star = 0.71 * (1+z)**1.84 * (10**DeltaMS)**0.32 * (10**(lgMstar-10.0))**(-0.70)
+    if return_fgas:
+        return 1./(1./Ratio_M_molgas_M_star+1.)
     return Ratio_M_molgas_M_star
 
-def calc_gas_fraction_Tacconi2018_beta_2(z, lgMstar=10.5, DeltaMS=0.0):
+def calc_gas_fraction_Tacconi2018_beta_2(z, lgMstar=10.5, DeltaMS=0.0, return_fgas=True):
     # Tacconi et al. 2018 (The Astrophysical Journal, 853:179 (22pp), 2018 February 1 https://doi.org/10.3847/1538-4357/aaa4b4)
     # Table 3
     # Best^c beta=2 with S14 (Speagle+2014) MS
@@ -44,13 +46,15 @@ def calc_gas_fraction_Tacconi2018_beta_2(z, lgMstar=10.5, DeltaMS=0.0):
     E = +0.11
     DeltaRe = 0.0 # log10 (R_e / R_e_0)
     log10_Ratio_M_molgas_M_star = A + B * (np.log10(1+z)-F)**beta + C * DeltaMS + D * (lgMstar-10.7) + E * (DeltaRe)
-    Ratio_M_molgas_M_star = 10**log10_Ratio_M_molgas_M_star
+    Ratio_M_molgas_M_star = float(10**log10_Ratio_M_molgas_M_star)
+    if return_fgas:
+        return 1./(1./Ratio_M_molgas_M_star+1.)
     return Ratio_M_molgas_M_star
 
-def calc_gas_fraction_Tacconi2018(z, lgMstar=10.5, DeltaMS=0.0):
-    return calc_gas_fraction_Tacconi2018_beta_2(z, lgMstar, DeltaMS)
+def calc_gas_fraction_Tacconi2018(z, lgMstar=10.5, DeltaMS=0.0, return_fgas=True):
+    return calc_gas_fraction_Tacconi2018_beta_2(z, lgMstar, DeltaMS, return_fgas=return_fgas)
 
-def calc_gas_fraction_A3COSMOS(cosmic_age=None, z=None, lgMstar=10.5, DeltaMS=0.0):
+def calc_gas_fraction_A3COSMOS(cosmic_age=None, z=None, lgMstar=10.5, DeltaMS=0.0, return_fgas=True):
     # A3COSMOS 
     # Sample 20181203 
     # fitting '/Users/dzliu/Cloud/GitLab/AlmaCosmos/Plot/Plot_z_deltaGas_data_fitting/20190715_with_gas_mass_calibration_H17/fitting_dzliu_function/best_fit_via_MCMC.json'
@@ -69,10 +73,12 @@ def calc_gas_fraction_A3COSMOS(cosmic_age=None, z=None, lgMstar=10.5, DeltaMS=0.
         else:
             cosmoAge = cosmo.age(z).value
     log10_Ratio_M_molgas_M_star = (a+ak*(lgMstar-10.0))*DeltaMS + b*(lgMstar-10.0) + (c+ck*(lgMstar-10.0))*(cosmoAge) + d
-    Ratio_M_molgas_M_star = 10**log10_Ratio_M_molgas_M_star
+    Ratio_M_molgas_M_star = float(10**log10_Ratio_M_molgas_M_star)
+    if return_fgas:
+        return 1./(1./Ratio_M_molgas_M_star+1.)
     return Ratio_M_molgas_M_star
 
-def calc_gas_fraction_A3COSMOS_with_Leslie2019_MS(cosmic_age=None, z=None, lgMstar=10.5, DeltaMS=0.0):
+def calc_gas_fraction_A3COSMOS_with_Leslie2019_MS(cosmic_age=None, z=None, lgMstar=10.5, DeltaMS=0.0, return_fgas=True):
     # A3COSMOS 
     # Sample 20181203 
     # fitting '/Users/dzliu/Cloud/GitLab/AlmaCosmos/Plot/Plot_z_deltaGas_data_fitting/20190827_with_gas_mass_calibration_H17_and_main_sequence_Leslie2019/fitting_dzliu_function/best_fit_via_MCMC.json'
@@ -87,10 +93,12 @@ def calc_gas_fraction_A3COSMOS_with_Leslie2019_MS(cosmic_age=None, z=None, lgMst
         else:
             cosmoAge = cosmo.age(z).value
     log10_Ratio_M_molgas_M_star = (a+ak*(lgMstar-10.0))*DeltaMS + b*(lgMstar-10.0) + (c+ck*(lgMstar-10.0))*(cosmoAge) + d
-    Ratio_M_molgas_M_star = 10**log10_Ratio_M_molgas_M_star
+    Ratio_M_molgas_M_star = float(10**log10_Ratio_M_molgas_M_star)
+    if return_fgas:
+        return 1./(1./Ratio_M_molgas_M_star+1.)
     return Ratio_M_molgas_M_star
 
-def calc_gas_fraction_A3COSMOS_with_Scoville2017_MS(cosmic_age=None, z=None, lgMstar=10.5, DeltaMS=0.0):
+def calc_gas_fraction_A3COSMOS_with_Scoville2017_MS(cosmic_age=None, z=None, lgMstar=10.5, DeltaMS=0.0, return_fgas=True):
     # A3COSMOS 
     # Sample 20181203 
     # fitting '/Users/dzliu/Cloud/GitLab/AlmaCosmos/Plot/Plot_z_deltaGas_data_fitting/20190827_with_gas_mass_calibration_H17_and_main_sequence_Scoville2017/fitting_dzliu_function/best_fit_via_MCMC.json'
@@ -105,7 +113,9 @@ def calc_gas_fraction_A3COSMOS_with_Scoville2017_MS(cosmic_age=None, z=None, lgM
         else:
             cosmoAge = cosmo.age(z).value
     log10_Ratio_M_molgas_M_star = (a+ak*(lgMstar-10.0))*DeltaMS + b*(lgMstar-10.0) + (c+ck*(lgMstar-10.0))*(cosmoAge) + d
-    Ratio_M_molgas_M_star = 10**log10_Ratio_M_molgas_M_star
+    Ratio_M_molgas_M_star = float(10**log10_Ratio_M_molgas_M_star)
+    if return_fgas:
+        return 1./(1./Ratio_M_molgas_M_star+1.)
     return Ratio_M_molgas_M_star
 
 #def calc_gas_fraction_A3COSMOS(cosmoAge, lgMstar=10.5, DeltaMS=0.0):
@@ -120,7 +130,7 @@ def calc_gas_fraction_A3COSMOS_with_Scoville2017_MS(cosmic_age=None, z=None, lgM
 #    popt = [0.4635, -0.7033, 0.03099, -0.1462, 0.8439] #<20190301># Eq850 this work, RemyRuyer GDR, Genzel2015_Eq12a_with_dzliu_limit MZR, KMT09 fmol, fitting all available data '/Users/dzliu/Cloud/GitLab/AlmaCosmos/Plots/Plot_z_deltaGas_data_fitting/20190301_with_gas_mass_calibration_Eq850_dzliu/20190301_fitting_dzliu_function/'
 #    a, b, c, d, e = popt
 #    log10_Ratio_M_molgas_M_star = a*DeltaMS + (b+c*cosmoAge)*(lgMstar-10.0) + d*(cosmoAge) + e
-#    Ratio_M_molgas_M_star = 10**log10_Ratio_M_molgas_M_star
+#    Ratio_M_molgas_M_star = float(10**log10_Ratio_M_molgas_M_star)
 #    return Ratio_M_molgas_M_star
 
 #def calc_gas_fraction_A3COSMOS_with_dzliu_850_gas_mass_calibration(cosmoAge, lgMstar=10.5, DeltaMS=0.0):
@@ -131,7 +141,7 @@ def calc_gas_fraction_A3COSMOS_with_Scoville2017_MS(cosmic_age=None, z=None, lgM
 #    popt = [0.4635, -0.7033, 0.03099, -0.1462, 0.8439] #<20190301># Eq850 this work, RemyRuyer GDR, Genzel2015_Eq12a_with_dzliu_limit MZR, KMT09 fmol, fitting all available data '/Users/dzliu/Cloud/GitLab/AlmaCosmos/Plots/Plot_z_deltaGas_data_fitting/20190301_with_gas_mass_calibration_Eq850_dzliu/20190301_fitting_dzliu_function/'
 #    a, b, c, d, e = popt
 #    log10_Ratio_M_molgas_M_star = a*DeltaMS + (b+c*cosmoAge)*(lgMstar-10.0) + d*(cosmoAge) + e
-#    Ratio_M_molgas_M_star = 10**log10_Ratio_M_molgas_M_star
+#    Ratio_M_molgas_M_star = float(10**log10_Ratio_M_molgas_M_star)
 #    return Ratio_M_molgas_M_star
 
 

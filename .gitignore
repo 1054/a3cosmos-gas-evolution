@@ -4,11 +4,13 @@ __pycache__
 *.pyo
 *.pyd
 .Python
+.pypirc
 *.so
 *.egg
 *.egg-info
 dist
 build/
+docs/_build/
 *.whl
 a3cosmos_gas_evolution/__pycache__
 a3cosmos_gas_evolution/Common_Python_Code/__pycache__

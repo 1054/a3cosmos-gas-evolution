@@ -112,7 +112,7 @@ class TestCalcMetalZ:
 
     def test_genzel2015ab_combined_scalar(self):
         result = calc_metalZ_from_FMR_following_Genzel2015ab_combined_by_dzliu(1e10, 1.0, 1.0)
-        assert len(result) == 1 or (hasattr(result, '__iter__') == False)
+        assert np.isscalar(result) or result.shape == ()
 
     def test_genzel2015ab_combined_array(self):
         M_star = np.array([1e9, 1e10, 1e11])

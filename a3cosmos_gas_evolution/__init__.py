@@ -15,6 +15,7 @@ from .Common_Python_Code import calc_delta_GD
 from .Common_Python_Code import calc_metal_Z
 from .Common_Python_Code import calc_fmol
 from .Common_Python_Code import calc_gas_mass_from_dust
+from .Common_Python_Code import calc_gas_mass_from_line
 from .Common_Python_Code import apply_cosmology
 cosmo = apply_cosmology.cosmo
 
