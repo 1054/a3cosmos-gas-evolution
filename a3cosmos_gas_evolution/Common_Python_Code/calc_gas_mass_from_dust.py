@@ -12,6 +12,8 @@ from __future__ import print_function
 import os, sys, re, json, time, astropy
 import numpy as np
 import astropy
+import scipy
+import scipy.interpolate
 from astropy.table import Table, Column, hstack
 from astropy import units as u
 from astropy import constants as const
@@ -78,6 +80,15 @@ def calc_M_mol_Groves2015(obs_flux_mJy, obs_wavelength_um, redshift):
     # They gas mass calibration are for total atomic+mol gas, 
     # but they also mentioned that for massive galaxies M_mol/M_ISM ~ 1, see their last paragraph in Sect. 3.3. 
     # 
+    if np.isscalar(obs_flux_mJy):
+        obs_flux_mJy = np.array([obs_flux_mJy])
+    elif isinstance(obs_flux_mJy, list):
+        obs_flux_mJy = np.array(obs_flux_mJy)
+    if np.isscalar(obs_wavelength_um):
+        obs_wavelength_um = np.array([obs_wavelength_um])
+    elif isinstance(obs_wavelength_um, list):
+        obs_wavelength_um = np.array(obs_wavelength_um)
+    # 
     #Brent_W = np.array([250., 350., 500.])
     #Brent_A = np.array([1.57, 1.49, 1.72]) # see Groves, bibcode=2015ApJ...799...96G, Table 6
     #Brent_B = np.array([0.86, 0.92, 0.96]) # see Groves, bibcode=2015ApJ...799...96G, Table 6, log(Mgas) = A + B * log(nuLnu_W)
@@ -114,6 +125,15 @@ def calc_M_total_gas_Groves2015(obs_flux_mJy, obs_wavelength_um, redshift):
     # Groves+2015
     # They gas mass calibration are for total atomic+mol gas, 
     # but they also mentioned that for massive galaxies M_mol/M_ISM ~ 1, see their last paragraph in Sect. 3.3. 
+    # 
+    if np.isscalar(obs_flux_mJy):
+        obs_flux_mJy = np.array([obs_flux_mJy])
+    elif isinstance(obs_flux_mJy, list):
+        obs_flux_mJy = np.array(obs_flux_mJy)
+    if np.isscalar(obs_wavelength_um):
+        obs_wavelength_um = np.array([obs_wavelength_um])
+    elif isinstance(obs_wavelength_um, list):
+        obs_wavelength_um = np.array(obs_wavelength_um)
     # 
     #Brent_W = np.array([250., 350., 500.])
     #Brent_A = np.array([1.57, 1.49, 1.72]) # see Groves, bibcode=2015ApJ...799...96G, Table 6

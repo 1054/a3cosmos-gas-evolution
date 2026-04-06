@@ -1,0 +1,38 @@
+# z_min  z_max  Psi_lg  Psi_lo  Psi_hi     Reference
+#               [M_solar year-1 Mpc-3]
+# 
+   0.03   0.03   -1.72    0.03    0.02     Sanders2003     # Sanders et al. (2003)   
+   0.03   0.03   -1.95    0.20    0.20     Takeuchi2003    # Takeuchi et al. (2003)  
+   0.40   0.70   -1.34    0.11    0.22     Magnelli2011    # Magnelli et al. (2011)  
+   0.70   1.00   -0.96    0.19    0.15     Magnelli2011    #
+   1.00   1.30   -0.89    0.21    0.27     Magnelli2011    #
+   1.30   1.80   -0.91    0.21    0.17     Magnelli2011    #
+   1.80   2.30   -0.89    0.25    0.21     Magnelli2011    #
+   0.40   0.70   -1.22    0.11    0.08     Magnelli2013    # Magnelli et al. (2013)  
+   0.70   1.00   -1.10    0.13    0.10     Magnelli2013    # 
+   1.00   1.30   -0.96    0.20    0.13     Magnelli2013    # 
+   1.30   1.80   -0.94    0.18    0.13     Magnelli2013    # 
+   1.80   2.30   -0.80    0.15    0.18     Magnelli2013    # 
+   0.00   0.30   -1.64    0.11    0.09     Gruppioni2013   # Gruppioni et al. (2013) 
+   0.30   0.45   -1.42    0.04    0.03     Gruppioni2013   # 
+   0.45   0.60   -1.32    0.05    0.05     Gruppioni2013   # 
+   0.60   0.80   -1.14    0.06    0.06     Gruppioni2013   # 
+   0.80   1.00   -0.94    0.06    0.05     Gruppioni2013   # 
+   1.00   1.20   -0.81    0.05    0.04     Gruppioni2013   # 
+   1.20   1.70   -0.84    0.04    0.04     Gruppioni2013   # 
+   1.70   2.00   -0.86    0.03    0.02     Gruppioni2013   # 
+   2.00   2.50   -0.91    0.12    0.09     Gruppioni2013   # 
+   2.50   3.00   -0.86    0.23    0.15     Gruppioni2013   # 
+   3.00   4.20   -1.36    0.50    0.23     Gruppioni2013   # 
+# 
+# IRLF function is either double power law, or
+# the function by Saunders et al. (1990). 
+# Integrated down to the same relative limiting luminosity, 
+# in units of the characteristic luminosity L*, of Lmin = 0.03 L*. 
+# A Salpeter initial mass function has been assumed.
+# 
+# AFUV = -2.5 lg <k_d>
+# < kd > = ρIR / ρFUV + 1 (e.g., Meurer et al. 1999). 
+# 
+# http://ned.ipac.caltech.edu/level5/March14/Madau/Madau5.html
+# Madau & Dickinson (2014) Annual Review of Astronomy and Astrophysics

@@ -1,0 +1,8 @@
+Baldry et al. 2008
+Moustakas et al. 2013
+Perez-Gonzalez et al. 2008
+Mortlock et al. 2011
+Marchesini et al. 2009
+Stark et al. 2009
+Bouwens et al. 2011
+-- see Behroozi et al. 2013ApJ...770...57B Table 3

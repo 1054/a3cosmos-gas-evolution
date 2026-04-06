@@ -1,0 +1,54 @@
+# z_min  z_max    Psi_c_lg Psi_c_lo Psi_c_hi   Psi_unc_lg Psi_unc_lo Psi_unc_hi   AFUV    Reference          
+#                   [M_solar year-1 Mpc-3]      [M_solar year-1 Mpc-3]                                       # 
+   0.01    0.1     -1.82    0.02    0.09       -2.540    0.02    0.09             1.80    Wyder2005          # Wyder et al. (2005), blue-gray hexagon
+    0.2    0.4     -1.50    0.05    0.05       -2.220    0.05    0.05             1.80    Schiminovich2005   # Schiminovich et al. (2005), blue triangles
+    0.4    0.6     -1.39    0.08    0.15       -2.110    0.08    0.15             1.80    Schiminovich2005   #  
+    0.6    0.8     -1.20    0.13    0.31       -1.920    0.13    0.31             1.80    Schiminovich2005   #  
+    0.8    1.2     -1.25    0.13    0.31       -1.970    0.13    0.31             1.80    Schiminovich2005   #  
+   0.05   0.05     -1.77    0.09    0.08       -2.398    0.09    0.08             1.57    Robotham2011       # Robotham & Driver (2011), dark green pentagon
+   0.05    0.2     -1.75    0.18    0.18       -2.194    0.18    0.18             1.11    Cucciati2012       # Cucciati et al. (2012), green squares
+    0.2    0.4     -1.55    0.12    0.12       -2.090    0.12    0.12             1.35    Cucciati2012       #  
+    0.4    0.6     -1.44    0.10    0.10       -2.096    0.10    0.10             1.64    Cucciati2012       #  
+    0.6    0.8     -1.24    0.10    0.10       -2.008    0.10    0.10             1.92    Cucciati2012       #  
+    0.8    1.0     -0.99    0.08    0.09       -1.878    0.08    0.09             2.22    Cucciati2012       #  
+    1.0    1.2     -0.94    0.09    0.09       -1.824    0.09    0.09             2.21    Cucciati2012       #  
+    1.2    1.7     -0.95    0.08    0.15       -1.818    0.08    0.15             2.17    Cucciati2012       #  
+    1.7    2.5     -0.75    0.09    0.49       -1.526    0.09    0.49             1.94    Cucciati2012       #  
+    2.5    3.5     -1.04    0.15    0.26       -1.628    0.15    0.26             1.47    Cucciati2012       #  
+    3.5    4.5     -1.69    0.32    0.22       -2.078    0.32    0.22             0.97    Cucciati2012       #  
+   0.92   1.33     -1.02    0.08    0.08       -1.832    0.08    0.08             2.03    Dahlen2007         # Dahlen et al. (2007), turquoise pentagons
+   1.62   1.88     -0.75    0.12    0.12       -1.562    0.12    0.12             2.03    Dahlen2007         #  
+   2.08   2.37     -0.87    0.09    0.09       -1.682    0.09    0.09             2.03    Dahlen2007         #  
+    1.9    2.7     -0.75    0.11    0.09       -1.294    0.11    0.09             1.36    Reddy2009          # Reddy & Steidel (2009), dark green triangles
+    2.7    3.4     -0.97    0.15    0.11       -1.398    0.15    0.11             1.07    Reddy2009          #  
+    3.8    3.8     -1.29    0.05    0.05       -1.522    0.05    0.05             0.58    Bouwens2012        # Bouwens et al. (2012a), (2012b), magenta pentagons
+    4.9    4.9     -1.42    0.06    0.06       -1.596    0.06    0.06             0.44    Bouwens2012        #  
+    5.9    5.9     -1.65    0.08    0.08       -1.730    0.08    0.08             0.20    Bouwens2012        #  
+    7.0    7.0     -1.79    0.10    0.10       -1.830    0.10    0.10             0.10    Bouwens2012        #  
+    7.9    7.9     -2.09    0.11    0.11       -2.090    0.11    0.11             1e-9    Bouwens2012        #  
+    7.0    7.0     -2.00    0.11    0.10       -2.040    0.11    0.10             0.10    Schenker2013       # Schenker et al. (2013), black crosses
+    8.0    8.0     -2.21    0.14    0.14       -2.210    0.14    0.14             1e-9    Schenker2013       #  
+# 
+# https://ned.ipac.caltech.edu/level5/March14/Madau/Madau5.html#Table%201
+# 
+# For the present purpose, we consider only surveys that have measured 
+# SFRs from rest-frame FUV (generally 1,500 Å) or MIR and FIR measurements. 
+# Other surveys of nebular line or radio emission are also important, but 
+# they provide more limited or indirect information as discussed in 
+# previous sections (Sections 4.3 and 4.4).
+# 
+# 
+# AFUV ≡ -2.5 log10 <k_d> -- SHOULD BE A BUG? +2.5?
+# AFUV ≡ +2.5 log10 <k_d> 
+# < kd > = ρIR / ρFUV + 1 (e.g., Meurer et al. 1999). -- SHOULD BE A BUG? NO + 1?
+# < kd > = ρIR / ρFUV     (e.g., Meurer et al. 1999). 
+# therefore to compute uncorrected Psi from the Psi which are already corrected, 
+#   data "datatable_Madau2014_UV.dat" 
+#   read {z_min 1 z_max 2 Psi_lg 3 Psi_lo 4 Psi_hi 5}
+#   read {Psi_c_lg 6 Psi_c_lo 7 Psi_c_hi 8 AFUV 9}
+#   set Adust = 10**(AFUV/(2.5))
+#   set Psi_lg = lg(10**Psi_c_lg / (Adust))
+#   print {Psi_lg Adust AFUV}
+# 
+# http://ned.ipac.caltech.edu/level5/March14/Madau/Madau5.html
+# Madau & Dickinson (2014) Annual Review of Astronomy and Astrophysics

@@ -9,16 +9,16 @@ from setuptools import setup, find_packages
 
 setup(
     name='a3cosmos_gas_evolution',
-    version='1.1.1',
+    version='2.0.0',
     description=(
         'A Python Package for Galaxy Cold Molecular Gas and Star Formation Evolution Equations.'
     ),
     keywords="a3cosmos galaxy molecular gas dust star formation SFR evolution equation parametrization",
     long_description=open('README.rst').read(),
     author='A3COSMOS Team',
-    author_email='dzliu@mpe.mpg.de',
+    author_email='dzliu@pmo.ac.cn',
     maintainer='A3COSMOS Team',
-    maintainer_email='dzliu@mpe.mpg.de',
+    maintainer_email='dzliu@pmo.ac.cn',
     license='BSD License',
     packages=find_packages(),
     platforms=["all"],
@@ -45,6 +45,11 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
+        'Programming Language :: Python :: 3.13',
+        'Programming Language :: Python :: 3.14',
         'Topic :: Scientific/Engineering :: Astronomy',
     ],
     install_requires=[
@@ -54,6 +59,7 @@ setup(
         'matplotlib',
         'funcsigs; python_version<"3.0"',
     ], 
+    test_suite='tests',
     include_package_data=True,
     #package_data={
     #    'project': ['default_data.json', 'other_datas/default/*.json']

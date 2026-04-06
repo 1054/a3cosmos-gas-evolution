@@ -1,0 +1,17 @@
+# zLo  zHi  zBin  number   lgMchar   Phi_1              alpha_1
+#                                                       
+  3.5  4.5  4.0   -1       10.50     25.68e-05          -1.55
+  4.5  5.5  5.0   -1       10.97     5.16e-05           -1.70
+  5.5  6.5  6.0   -1       10.72     1.35e-05           -1.91
+  6.5  7.5  7.0   -1       10.78     0.53e-05           -1.95
+  7.5  8.5  8.0   -1       10.72     0.035e-05          -2.25
+
+# 
+# dzliu: I think they are directly measured, Eddington bias uncorrected.  
+# quote: In our
+# methodology, the “effective” uncertainty in stellar mass
+# is not stellar mass dependent, as we do not use individual
+# stellar masses to construct the GSMF on the low-mass
+# end but rather convolve the UV LF with stellar mass–UV
+# luminosity distribution, 
+# note: From their Table 3, not the "flat prior" one. 

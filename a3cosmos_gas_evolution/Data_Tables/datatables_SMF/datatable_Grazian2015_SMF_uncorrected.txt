@@ -1,0 +1,10 @@
+# zLo  zHi  zBin  number   lgMchar   Phi_1              alpha_1
+#                                                       
+  3.5  4.5  4.0   1293     10.91     9.332543008e-05    -1.77
+  4.5  5.5  5.0   370      11.21     2.041737945e-05    -1.90
+  5.5  6.5  6.0   126      10.56     5.248074602e-05    -1.95
+  6.5  7.5  7.0   20       10.77     2.454708916e-06    -2.54
+
+# 
+# Directly measured, Eddington bias uncorrected. From Grazian2015 Table C.1. 
+# Corrected one see Grazian2015 Table 3. 

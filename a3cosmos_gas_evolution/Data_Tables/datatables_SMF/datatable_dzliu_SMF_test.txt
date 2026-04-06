@@ -1,0 +1,22 @@
+# zLo  zHi  zBin  number   lgMchar   Phi_1              alpha_1
+#                                                       
+  0.0  0.0  0.0   -1          -1           -1              -1
+  0.2  0.5  0.35  -1       10.80        11e-4           -1.40
+  0.5  1.0  0.75  -1       10.80        10e-4           -1.43
+  1.0  1.5  1.25  -1       10.80       8.8e-4           -1.46
+  1.5  2.0  1.75  -1       10.80       5.7e-4           -1.50
+  2.0  2.5  2.25  -1       10.80       3.7e-4           -1.52
+  2.5  3.0  2.75  -1       10.50       1.4e-4           -1.54
+  3.0  4.0  3.5   -1       10.50       1.4e-4           -1.56
+  3.5  4.5  4.0   -1       10.50       2.5e-4           -1.60          # from datatable_Song2015_SMF_uncorrected.txt
+  4.5  5.5  5.0   -1       10.50       5.2e-5           -1.70          # from datatable_Song2015_SMF_uncorrected.txt
+  5.5  6.5  6.0   -1       10.50       1.5e-5           -1.80          # from datatable_Song2015_SMF_uncorrected.txt
+  6.5  7.5  7.0   -1       10.50       5.0e-6           -1.90          # from datatable_Song2015_SMF_uncorrected.txt
+  7.5  8.5  8.0   -1       10.50       3.5e-7           -2.20          # from datatable_Song2015_SMF_uncorrected.txt
+  0.0  0.0  9.0   -1          -1           -1              -1
+  0.0  0.0 10.0   -1          -1           -1              -1
+  0.0  0.0 11.0   -1          -1           -1              -1
+  0.0  0.0 12.0   -1          -1           -1              -1
+
+# 
+# dzliu: test 

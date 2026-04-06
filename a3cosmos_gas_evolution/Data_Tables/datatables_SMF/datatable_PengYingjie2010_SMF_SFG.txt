@@ -1,0 +1,8 @@
+# zLo    zHi   number   lgMcomp   lgMchar   Phi_1    alpha_1
+# 
+  0.02  0.085  -99      -1        10.63     1.068e-3   -1.40
+
+# Table 3, PDF Page 19
+# Chabrier IMF
+# SDSS DR7
+# Refer - Peng Yingjie 2010b - SDSS and zCOSMOS - SMF - 2010ApJ...721..193P.pdf

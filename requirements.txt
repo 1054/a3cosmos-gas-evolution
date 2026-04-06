@@ -3,3 +3,4 @@ astropy
 matplotlib
 packaging
 scipy
+pytest

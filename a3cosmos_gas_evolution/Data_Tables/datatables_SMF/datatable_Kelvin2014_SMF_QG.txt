@@ -1,0 +1,8 @@
+# zLo    zHi   number   lgMcomp   lgMchar   Phi_1    alpha_1
+# 
+  0.025  0.06  -99      -1        10.60     3.96e-3    -0.27
+
+# Kelvin 2014 (2014MNRAS.444.1647K)
+# GAMA survey
+# IMF: Chabrier 2003
+# Table 3, Spheroid dominated, and Disc dominated

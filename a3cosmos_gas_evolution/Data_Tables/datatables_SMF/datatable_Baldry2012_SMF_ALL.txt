@@ -1,0 +1,6 @@
+# zLo    zHi   number   lgMcomp   lgMchar   Phi_1    alpha_1     Phi_2    alpha_2    lgrhostar
+# 
+  0.002  0.06  5210     -1        10.66     3.96e-3   -0.35      0.79e-3   -1.47     -1
+
+# Figure 13 Page 10
+# Chabrier IMF
