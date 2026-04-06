@@ -5,7 +5,7 @@
 
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../..'))
+#sys.path.insert(0, os.path.abspath('../..'))
 
 project = 'a3cosmos-gas-evolution'
 copyright = '2017-2026, A3COSMOS Team'
