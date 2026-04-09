@@ -268,6 +268,75 @@ def calc_metalZ_from_FMR_following_Genzel2015a(M_star, SFR, z):
     return metalZ_PP04
 
 
+def calc_metalZ_from_FMR_following_Genzel2015a_with_Sarkar2025_limit(M_star, SFR, z):
+    # Genzel et al. 2015:
+    #   Following Maiolino et al. (2008) we combined the mass–metallicity relations 
+    #   at different redshifts presented by Erb et al. (2006), 
+    #   Maiolino et al. (2008), Zahid et al. (2014), and Wuyts et al. (2014) 
+    #   in the following fitting function: 
+    #     12+log(O/H) = a - 0.087 * (lgMstar - b)**2, 
+    #     a = 8.74, and 
+    #     b = 10.4(0.05) + 4.46(0.3) * lg(1+z) - 1.78(0.4) * (lg(1+z))**2  -- Eq. (12a)
+    # 
+    # Sarkar, Chakraborty, Vogelsberger, et al. (2025ApJ...978..136S)
+    #   Abstract: 12 + log(O/H) = 6.29 + 0.237 × logMstar - 0.06 * (1 + z)
+    # 
+    # Where their derivative match, renormalize at that ref. point.
+    # 
+    a = 8.74
+    b = 10.4 + 4.46 * np.log10(1+z) - 1.78 * (np.log10(1+z))**2
+    metalZ_G15a = a - 0.087 * (np.log10(M_star) - b)**2
+    metalZ_S25 = calc_metalZ_from_FMR_following_Sarkar2025(M_star, z)
+    #print('metalZ_G15a', metalZ_G15a)
+    #print('metalZ_S25', metalZ_S25)
+    # 
+    if np.isscalar(z):
+        z_list = [z]
+        b_list = [b]
+        M_star_list = [M_star]
+        metalZ_G15a_list = [metalZ_G15a]
+        metalZ_S25_list = [metalZ_S25]
+    else:
+        z_list = np.array(z)
+        b_list = np.array(b)
+        M_star_list = np.array(M_star)
+        metalZ_G15a_list = np.array(metalZ_G15a)
+        metalZ_S25_list = np.array(metalZ_S25)
+    # 
+    metalZ_out = [None]*len(z_list)
+    for kk in range(len(z_list)):
+        xarr = np.arange(7.0, 12.0, 0.01)
+        derivative = -2 * 0.087 * xarr + 2 * 0.087 * b_list[kk]
+        xpos = np.argmin(np.abs(derivative - 0.237))
+        ref_M_star_log = xarr[xpos]
+        ref_M_star = 10**ref_M_star_log
+        ref_metalZ_G15a = float(a - 0.087 * (ref_M_star_log - b_list[kk])**2)
+        ref_metalZ_S25 = float(calc_metalZ_from_FMR_following_Sarkar2025(ref_M_star, z_list[kk]))
+        #print('ref_M_star_log', ref_M_star_log, 'ref_metalZ_S25', ref_metalZ_S25, 'ref_metalZ_G15a', ref_metalZ_G15a)
+        if np.isscalar(M_star_list[kk]):
+            if M_star_list[kk] < ref_M_star and metalZ_G15a_list[kk] < metalZ_S25_list[kk]:
+                metalZ_out[kk] = float(metalZ_S25_list[kk]) - ref_metalZ_S25 + ref_metalZ_G15a
+            elif M_star_list[kk] > 10**b_list[kk]:
+                metalZ_out[kk] = a
+            else:
+                metalZ_out[kk] = float(metalZ_G15a_list[kk])
+        else:
+            metalZ_out[kk] = [None]*len(M_star_list[kk])
+            for jj in range(len(M_star_list[kk])):
+                if M_star_list[kk][jj] < ref_M_star and metalZ_G15a_list[kk][jj] < metalZ_S25_list[kk][jj]:
+                    metalZ_out[kk][jj] = float(metalZ_S25_list[kk][jj]) - ref_metalZ_S25 + ref_metalZ_G15a
+                elif M_star_list[kk][jj] > 10**b_list[kk]:
+                    metalZ_out[kk][jj] = a
+                else:
+                    metalZ_out[kk][jj] = float(metalZ_G15a_list[kk][jj])
+    # 
+    if np.isscalar(z):
+        #print('metalZ_out[0]', metalZ_out[0])
+        return metalZ_out[0]
+    # 
+    return np.array(metalZ_out)
+
+
 def calc_metalZ_from_FMR_following_Genzel2015_Eq12b(M_star, SFR):
     # Genzel et al. 2015 method 2:
     #   Mannucci et al. (2010) presented evidence for a dependence of metallicity 
@@ -575,7 +644,7 @@ def calc_metalZ_from_FMR_with_dzliu_selection(M_star, SFR, z):
         input_z = np.array(z)
     if SFR is None:
         SFR = calc_galaxy_main_sequence.calc_SFR_MS_Speagle2014(
-            input_M_star, input_z)
+            input_z, np.log10(input_M_star))
     if np.isscalar(SFR):
         input_SFR = np.array([SFR])
     else:
@@ -588,8 +657,9 @@ def calc_metalZ_from_FMR_with_dzliu_selection(M_star, SFR, z):
         input_SFR = np.array([input_SFR[0]]*len(input_M_star))
         #print('calc_metalZ_from_FMR_with_dzliu_selection() Replicating input_SFR')
     # 
-    metalZ_G15a = calc_metalZ_from_FMR_following_Genzel2015_Eq12a(input_M_star, input_z)
+    #metalZ_G15a = calc_metalZ_from_FMR_following_Genzel2015_Eq12a(input_M_star, input_z)
     #metalZ_G15b = calc_metalZ_from_FMR_following_Genzel2015_Eq12b(input_M_star, input_SFR) # equals convert_metalZ_M08_to_metalZ_PP04_N2_linear(calc_metalZ_from_FMR_following_Mannucci2010_Eq4(input_M_star, input_SFR))
+    metalZ_G15a = calc_metalZ_from_FMR_following_Genzel2015a_with_Sarkar2025_limit(input_M_star, None, input_z)
     metalZ_M10Eq4 = convert_metalZ_M08_to_metalZ_PP04_N2_polynomial(calc_metalZ_from_FMR_following_Mannucci2010_Eq4(input_M_star, input_SFR)) # apply convert_metalZ_M08_to_metalZ_PP04_N2_polynomial() conversion is better because it will turn down a little bit the metalZ at the low mass end!
     # 
     # choose min of (metalZ_G15a, metalZ_M10Eq4)
@@ -622,11 +692,6 @@ def calc_metalZ_from_FMR_with_dzliu_selection(M_star, SFR, z):
     mask3 = (input_M_star >= ref_M_star)
     metalZ_out[mask3] = ref_metalZ_G15a[mask3]
     # 
-    # correct for low-mass high-z too low metallicity
-    metalZ_S25 = calc_metalZ_from_FMR_following_Sarkar2025(input_M_star, input_z)
-    mask4 = np.logical_and.reduce((input_z  > 4, input_M_star < 11.0, metalZ_out < metalZ_S25))
-    if np.count_nonzero(mask4) > 0:
-	    metalZ_out[mask4] = metalZ_S25[mask4]
     # 
     if np.isscalar(z) and np.isscalar(M_star):
         return metalZ_out[0]

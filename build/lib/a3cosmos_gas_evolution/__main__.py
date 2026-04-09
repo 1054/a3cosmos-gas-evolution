@@ -50,7 +50,7 @@ def load_all_modules():
     load_all_functions_in_one_module(calc_gas_depletion_time,           r'^calc_gas_depletion_time_.*',                           print_to_screen = False)
     load_all_functions_in_one_module(calc_alpha_CO,                     r'^calc_alphaCO_from_metalZ_following_.*',                print_to_screen = False)
     load_all_functions_in_one_module(calc_delta_GD,                     r'^calc_deltaGD_from_metalZ_following_.*',                print_to_screen = False)
-    load_all_functions_in_one_module(calc_metal_Z,                      r'^(calc_metalZ_from_FMR_following_|convert_metalZ_).*',  print_to_screen = False)
+    load_all_functions_in_one_module(calc_metal_Z,                      r'^(calc_metalZ_from_FMR_|convert_metalZ_).*',            print_to_screen = False)
     load_all_functions_in_one_module(calc_fmol,                         r'^calc_fmol_from_metalZ_following_.*',                   print_to_screen = False)
     load_all_functions_in_one_module(calc_gas_mass_from_dust,           r'^calc_gas_mass_from_dust_.*',                           print_to_screen = False)
     load_all_functions_in_one_module(calc_gas_mass_from_line,           r'^calc_gas_mass_from_line_.*',                           print_to_screen = False)
