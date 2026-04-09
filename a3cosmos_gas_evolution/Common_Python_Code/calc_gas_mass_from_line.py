@@ -21,7 +21,10 @@ if sys.version_info.major >= 3:
 else:
     pass
 
-from calc_metal_Z import calc_metalZ_from_FMR_following_Genzel2015a
+from calc_metal_Z import (
+    calc_metalZ_from_FMR_following_Genzel2015a,
+    calc_metalZ_from_FMR_with_dzliu_selection,
+)
 from calc_alpha_CO import calc_alphaCO_from_metalZ_following_Genzel2015a
 
 
@@ -119,7 +122,8 @@ def calc_gas_mass_from_line_flux(
                 alpha_CO = ALPHA_CO_SB
             else:
                 SFR = None # not needed
-                metalZ = calc_metalZ_from_FMR_following_Genzel2015a(10**lgMstar, SFR, z)
+                #metalZ = calc_metalZ_from_FMR_following_Genzel2015a(10**lgMstar, SFR, z)
+                metalZ = calc_metalZ_from_FMR_with_dzliu_selection(10**lgMstar, SFR, z)
                 alpha_CO = calc_alphaCO_from_metalZ_following_Genzel2015a(metalZ)
                 if verbose:
                     print(f'metalZ: {metalZ:.2f}, Z/Zsun: {10**(metalZ-8.69):.2f}, alpha_CO: {alpha_CO:.2f}')

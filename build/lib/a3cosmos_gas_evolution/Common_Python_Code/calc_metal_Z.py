@@ -5,6 +5,8 @@
 #                               calc_metalZ_from_FMR_following_Genzel2015a, 
 #                               calc_metalZ_from_FMR_following_Genzel2015b, 
 #                               calc_metalZ_from_FMR_following_Genzel2015ab_combined_by_dzliu, 
+#                               calc_metalZ_from_FMR_following_Guo2016,
+#                               calc_metalZ_from_FMR_following_Sarkar2025,
 #                               convert_metalZ_M08_to_metalZ_PP04, 
 #                               convert_metalZ_D02_to_metalZ_PP04, 
 #                               convert_metalZ_KK04_to_metalZ_PP04, 
@@ -363,6 +365,23 @@ def calc_metalZ_from_FMR_following_Guo2016(M_star, SFR):
     return metalZ_M08
 
 
+def calc_metalZ_from_FMR_following_Sarkar2025(M_star, z):
+    # metalZ is 12+log(O/H)_{PP04(O3N2)?}
+    # 
+    # Sarkar, Chakraborty, Vogelsberger, et al. (2025ApJ...978..136S)
+    # Abstract: 12 + log(O/H) = 6.29 + 0.237 × logMstar - 0.06 * (1 + z)
+    # 
+    return 6.29 + 0.237 * np.log10(M_star) - 0.06 * (1 + z)
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -540,6 +559,8 @@ def calc_metalZ_from_FMR_with_dzliu_selection(M_star, SFR, z):
     # metalZ is 12+log(O/H)_{PP04}
     # use Genzel+2015 Eq.12a (variable: z) when it is lower than Mannucci+2010 Eq.4 (SFR)
     # but at the massive end, if Genzel+2015 Eq.12a decreases with increasing stellar mass, we set it to not decrease. 
+    # [20260409]
+    # also use Sarkar+2025 Eq.(in abstract) when Genzel+2015 Eq.12a is lower than Sarkar+2025 Eq.(in abstract).
     input_M_star = np.log10(M_star)
     if np.isscalar(M_star):
         input_M_star = np.array([M_star])
@@ -594,6 +615,12 @@ def calc_metalZ_from_FMR_with_dzliu_selection(M_star, SFR, z):
     # keeps constant at massive end but use G15a
     mask3 = (input_M_star >= ref_M_star)
     metalZ_out[mask3] = ref_metalZ_G15a[mask3]
+    # 
+    # correct for low-mass high-z too low metallicity
+    metalZ_S25 = calc_metalZ_from_FMR_following_Sarkar2025(input_M_star, input_z)
+    mask4 = np.logical_and.reduce((input_z  > 4, input_M_star < 11.0, metalZ_out < metalZ_S25))
+    if np.count_nonzero(mask4) > 0:
+	   metalZ_out[mask4] = metalZ_S25[mask4]
     # 
     return metalZ_out
 
