@@ -10,8 +10,8 @@ import sys
 project = 'a3cosmos-gas-evolution'
 copyright = '2017-2026, A3COSMOS Team'
 author = 'A3COSMOS Team'
-release = '2.0.2'
-version = '2.0.2'
+release = '2.0.3'
+version = '2.0.3'
 
 extensions = [
     'sphinx.ext.autodoc',

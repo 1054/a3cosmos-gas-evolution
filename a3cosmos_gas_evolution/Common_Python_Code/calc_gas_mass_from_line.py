@@ -79,7 +79,8 @@ def calc_gas_mass_from_line_flux(
         # 气体质量
         if alpha_CII is None:
             alpha_CII = ALPHA_CII
-        M_gas = L_CII_Lsun / alpha_CII  # M_sun
+        #M_gas = L_CII_Lsun / alpha_CII  # M_sun # Zanella et al. 2018 Eq. 3 is incorrect.
+        M_gas = L_CII_Lsun * alpha_CII  # M_sun
         
         lgMgas = np.log10(M_gas)
         lgLline = np.log10(L_CII_Lsun)
