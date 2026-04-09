@@ -20,6 +20,8 @@ from calc_metal_Z import (
     calc_metalZ_from_FMR_following_Genzel2015b,
     calc_metalZ_from_FMR_following_Genzel2015ab_combined_by_dzliu,
     calc_metalZ_from_FMR_following_Guo2016,
+    calc_metalZ_from_FMR_following_Sarkar2025,
+    calc_metalZ_from_FMR_with_dzliu_selection,
     convert_metalZ_M08_to_metalZ_PP04,
     convert_metalZ_D02_to_metalZ_PP04,
     convert_metalZ_KK04_to_metalZ_PP04,
@@ -124,6 +126,34 @@ class TestCalcMetalZ:
     def test_guo2016_scalar(self):
         result = calc_metalZ_from_FMR_following_Guo2016(1e10, 1.0)
         assert np.isscalar(result) or result.shape == ()
+
+    def test_sarkar2025_scalar(self):
+        result = calc_metalZ_from_FMR_following_Sarkar2025(1e10, 1.0)
+        assert np.isscalar(result) or result.shape == ()
+    
+    def test_sarkar2025_array(self):
+        M_star = np.array([1e9, 1e10, 1e11])
+        z = 1.0
+        result = calc_metalZ_from_FMR_following_Sarkar2025(M_star, z)
+        assert len(result) == 3
+
+    def test_with_dzliu_selection_scalar(self):
+        result = calc_metalZ_from_FMR_with_dzliu_selection(1e10, 1.0, 1.0)
+        assert np.isscalar(result) or result.shape == ()
+    
+    def test_with_dzliu_selection_array(self):
+        M_star = np.array([1e9, 1e10, 1e11])
+        SFR = 1.0
+        z = 1.0
+        result = calc_metalZ_from_FMR_with_dzliu_selection(M_star, SFR, z)
+        assert len(result) == 3
+    
+    def test_with_dzliu_selection_array_with_none_sfr(self):
+        M_star = np.array([3e10, 2e10, 1e10])
+        SFR = None
+        z = np.array([1.0, 2.0, 6.0])
+        result = calc_metalZ_from_FMR_with_dzliu_selection(M_star, SFR, z)
+        assert len(result) == 3
 
     def test_convert_M08_to_PP04(self):
         metalZ_M08 = 8.67

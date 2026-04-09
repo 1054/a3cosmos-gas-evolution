@@ -21,9 +21,12 @@ import numpy as np
 from astropy.table import Table, Column, hstack
 from copy import copy
 
-if not (os.path.dirname(os.path.abspath(__file__)) in sys.path): sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+if not (os.path.dirname(os.path.abspath(__file__)) in sys.path): 
+    sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 import apply_cosmology
 cosmo = apply_cosmology.cosmo
+
+import calc_galaxy_main_sequence
 
 if sys.version_info.major >= 3:
     long = int
@@ -566,14 +569,17 @@ def calc_metalZ_from_FMR_with_dzliu_selection(M_star, SFR, z):
         input_M_star = np.array([M_star])
     else:
         input_M_star = np.array(M_star)
-    if np.isscalar(SFR):
-        input_SFR = np.array([SFR])
-    else:
-        input_SFR = np.array(SFR)
     if np.isscalar(z):
         input_z = np.array([z])
     else:
         input_z = np.array(z)
+    if SFR is None:
+        SFR = calc_galaxy_main_sequence.calc_SFR_MS_Speagle2014(
+            input_M_star, input_z)
+    if np.isscalar(SFR):
+        input_SFR = np.array([SFR])
+    else:
+        input_SFR = np.array(SFR)
     # 
     if len(input_z) == 1 and len(input_M_star) > 1:
         input_z = np.array([input_z[0]]*len(input_M_star))
@@ -620,8 +626,10 @@ def calc_metalZ_from_FMR_with_dzliu_selection(M_star, SFR, z):
     metalZ_S25 = calc_metalZ_from_FMR_following_Sarkar2025(input_M_star, input_z)
     mask4 = np.logical_and.reduce((input_z  > 4, input_M_star < 11.0, metalZ_out < metalZ_S25))
     if np.count_nonzero(mask4) > 0:
-	   metalZ_out[mask4] = metalZ_S25[mask4]
+	    metalZ_out[mask4] = metalZ_S25[mask4]
     # 
+    if np.isscalar(z) and np.isscalar(M_star):
+        return metalZ_out[0]
     return metalZ_out
 
 

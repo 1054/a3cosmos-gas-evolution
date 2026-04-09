@@ -9,7 +9,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='a3cosmos_gas_evolution',
-    version='2.1.0',
+    version='2.1.1',
     description=(
         'A Python Package for Galaxy Cold Molecular Gas and Star Formation Evolution Equations.'
     ),
